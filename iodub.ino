@@ -8,14 +8,8 @@
 #include <PubSubClient.h>
 #include <string.h>
 
-
 char macstr[18];
 class Light;
-
-// Update these with values suitable for your hardware/network.
-// #define TOPIC "/buttons/cmd"
-// #define stat/my_device/POWER  ON
-
 
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
 IPAddress ip(192, 168, 16, 70);
@@ -44,11 +38,14 @@ class Light {
   
   void send() {
     digitalWrite(outputNr, on);
-    char strNr[10];
-    char strOn[10];
+    char strNr[5];
+    char strOn[4];
     snprintf(strNr, 10, "%d",outputNr);
-    snprintf(strOn, 10, "%d",on);
-    client.publish(name, strOn);
+    snprintf(strOn, 10, "%s",on?"ON":"OFF");
+
+    char strPub[25];
+    snprintf(strPub, 25, "stat/%s/POWER", name);
+    client.publish(strPub, strOn);
   }
 };
 
@@ -67,11 +64,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
       for(uint8_t i=0; i<(sizeof(lights)/sizeof(*lights)); i++) {
         Light &l=lights[i];
         if(strcmp(pch, l.name) == 0) {
-          if(strcmp(payload, "ON")) {
+                Serial.println((char *)payload);
+
+          if(0 == strncmp(payload, "ON", min(length,2))) {
             l.on=true;
             l.send();
           }
-          else if(strcmp(payload, "OFF")) {
+          else if(0==strncmp(payload, "OFF", min(length,3))) {
             l.on=false;
             l.send();   
           } 
@@ -86,14 +85,14 @@ long lastReconnectAttempt = 0;
 
 boolean reconnect() {
   if (client.connect("iodub")) {
-    client.subscribe("stat/+/power");
+    client.subscribe("cmnd/+/power");
   }
   return client.connected();
 }
 
 void setup()
 {
-    Serial.begin(115200);
+  Serial.begin(115200);
   Serial.println("-----------------------------------------");
   Serial.println("CONTROLLINO");
   Serial.println("-----------------------------------------");
