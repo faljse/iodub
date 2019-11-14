@@ -2,7 +2,8 @@
 
 Im in the process of renovating my family home and chose controllino as my home automation device.
 - light switches are running on 24V/DI on controllino
-- lights are connected to relay on controllino DO
+- lights are connected to relay on [controllino](https://www.controllino.biz/controllino-mega/)
+ DO
 - light switches are pushbuttons
 - Multiple control cabinets (˜4) will be distributed around the house to keep cable lengths manageable
 - controllinos will be connected to a mqtt broker to handle smart stuff.
