@@ -7,7 +7,7 @@
 
 #define DMX_BAUD 250000
 #define DMX_BAUD_BREAK 80000
-#define DMX_CHANNELS 64
+#define DMX_CHANNELS 16
 volatile unsigned char dmx_cur[DMX_CHANNELS];
 volatile unsigned char dmx_set[DMX_CHANNELS];
 

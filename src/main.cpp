@@ -68,17 +68,24 @@ void timer_init() {
   TCCR1A = 0x00;      // Normal mode, => Disconnect Pin OC1  PWM Operation disabled
   TCCR1B = 0x02;      // 16MHz clock with prescaler, TCNT1 increments every .5 uS (cs11 bit set)
   OCR1A = 33333;   // = 16666 microseconds (each count is .5 us)
+  // OCR1A = 66666;   // = 16666 microseconds (each count is .5 us)
+
   TIMSK1 |= (1 << OCIE1A); //Bit Output Compare A Match Interrupt Enable setzen
+}
+
+int8_t sgn(int8_t x) {
+  if (x > 0) return 1;
+  if (x < 0) return -1;
+  return 0;
 }
 
 ISR(TIMER1_COMPA_vect) {
   for(uint8_t i=0;i!=DMX_CHANNELS;i++) {
-    if(dmx_cur[i]>dmx_set[i]) dmx_cur[i]--;
-    if(dmx_cur[i]<dmx_set[i]) dmx_cur[i]++;
+    int16_t diff=dmx_set[i]-dmx_cur[i];
+    if(diff>10||diff<-10)
+      diff=diff/5;
+    dmx_cur[i]=dmx_cur[i]+diff;
   }
-  // Serial.println("set");
-  // Serial.println(dmx_set[0]);
-  // Serial.println(dmx_cur[0]);
 }
 
 void loop() {
