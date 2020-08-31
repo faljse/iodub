@@ -13,6 +13,7 @@
 #include <dmx.h>
 #define TLight 1
 #define TDim 2
+#define COUNT_OF(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
 
 
 
@@ -47,13 +48,13 @@ char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
 
 void setup()
 {
-  Serial.begin(19200);
-  Serial.println("--IODUB--");
-  for(int i=0; i<(sizeof(lights)/sizeof(*lights)); i++) {
+  for(int i=0; i<COUNT_OF(lights); i++) {
     lights[i].inputNr.begin();
   }
   dmx_init();
   timer_init();
+  Serial.begin(19200);
+  Serial.println("--IODUB--");
   NetEeprom.begin();
   Udp.begin(1717);
 }
@@ -75,6 +76,9 @@ ISR(TIMER1_COMPA_vect) {
     if(dmx_cur[i]>dmx_set[i]) dmx_cur[i]--;
     if(dmx_cur[i]<dmx_set[i]) dmx_cur[i]++;
   }
+  // Serial.println("set");
+  // Serial.println(dmx_set[0]);
+  // Serial.println(dmx_cur[0]);
 }
 
 void loop() {
@@ -97,7 +101,7 @@ void handlePacket() {
     case TLight:
       break;
     case TDim:
-      for(uint8_t i=0; i!=sizeof(dimmers); i++) {
+      for(uint8_t i=0; i!=COUNT_OF(dimmers); i++) {
         Dimmer &d=dimmers[i];
         uint8_t id=packetBuffer[2];
         if(d.nr==id){
@@ -114,17 +118,12 @@ void handlePacket() {
         }
 
       }
-      break;
-    
+      break; 
     default:
+          Udp.beginPacket(remote, port);
+          Udp.write("NOK");
+          Udp.endPacket();
       break;
     }
-    if(packetBuffer[1]==TLight) {
-
-    } else if(packetBuffer[1]==TDim) {
-
-    }
-
-
   }
 }
