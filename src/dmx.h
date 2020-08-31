@@ -1,3 +1,6 @@
+#ifndef DMX_H
+#define DMX_H
+
 #include <Controllino.h>
 #include <avr/interrupt.h>
 
@@ -5,7 +8,9 @@
 #define DMX_BAUD 250000
 #define DMX_BAUD_BREAK 80000
 #define DMX_CHANNELS 64
-volatile unsigned char dmx_buffer[DMX_CHANNELS];
+volatile unsigned char dmx_cur[DMX_CHANNELS];
+volatile unsigned char dmx_set[DMX_CHANNELS];
+
 // https://www.ulrichradig.de/home/index.php/avr/atmega8-experimentierboard/avr---dmx
 ISR (USART3_TX_vect)
 {
@@ -28,7 +33,7 @@ ISR (USART3_TX_vect)
 		case (2):
 			_delay_us(10);
 			//Ausgabe des Zeichens
-			UDR3 = dmx_buffer[dmx_channel_tx_count];
+			UDR3 = dmx_cur[dmx_channel_tx_count];
 			dmx_channel_tx_count++;
  
 			if(dmx_channel_tx_count == 8)
@@ -53,3 +58,4 @@ void dmx_init() {
 	UDR3 = 0;//Start DMX
 }
 
+#endif
