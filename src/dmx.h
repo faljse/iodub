@@ -7,7 +7,7 @@
 
 #define DMX_BAUD 250000
 #define DMX_BAUD_BREAK 80000
-#define DMX_CHANNELS 16
+#define DMX_CHANNELS 32
 volatile unsigned char dmx_cur[DMX_CHANNELS];
 volatile unsigned char dmx_set[DMX_CHANNELS];
 
@@ -33,10 +33,10 @@ ISR (USART3_TX_vect)
 		case (2):
 			_delay_us(10);
 			//Ausgabe des Zeichens
-			UDR3 = dmx_cur[dmx_channel_tx_count];
+			UDR3 =  dmx_cur[dmx_channel_tx_count];
 			dmx_channel_tx_count++;
  
-			if(dmx_channel_tx_count == 8)
+			if(dmx_channel_tx_count == DMX_CHANNELS)
 			{
 				dmx_channel_tx_count = 0;
 				dmx_tx_state = 0;

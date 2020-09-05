@@ -38,7 +38,9 @@ Light lights[] = {
 };
 
 Dimmer dimmers[] = {
- Dimmer(1, 1,1,2,"Leds am Tisch"),
+ Dimmer(1, 1,1,2,"Leds am Tisch1"),
+  Dimmer(2, 1,3,4,"Leds am Tisch2")
+
 };
 
 Terminal terminals[] = {
@@ -68,8 +70,6 @@ void timer_init() {
   TCCR1A = 0x00;      // Normal mode, => Disconnect Pin OC1  PWM Operation disabled
   TCCR1B = 0x02;      // 16MHz clock with prescaler, TCNT1 increments every .5 uS (cs11 bit set)
   OCR1A = 33333;   // = 16666 microseconds (each count is .5 us)
-  // OCR1A = 66666;   // = 16666 microseconds (each count is .5 us)
-
   TIMSK1 |= (1 << OCIE1A); //Bit Output Compare A Match Interrupt Enable setzen
 }
 
