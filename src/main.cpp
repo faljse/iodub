@@ -109,7 +109,7 @@ void loop()
   printTasks();
 }
 
-char ptrTaskList[250];
+char ptrTaskList[450];
 void tasks(char *pcWriteBuffer);
 
 void printTasks()
@@ -157,24 +157,39 @@ void tasks(char *pcWriteBuffer)
             ulTotalRunTimeDiv100 has already been divided by 100. */
         ulStatsAsPercentage =
             pxTaskStatusArray[x].ulRunTimeCounter / ulTotalRunTime;
-
-        if (ulStatsAsPercentage > 0UL)
+        if(ulStatsAsPercentage<1)
+          ulStatsAsPercentage=1;
+        if(ulStatsAsPercentage>99)
+          ulStatsAsPercentage=99;
+        char cStatus;
+        switch( pxTaskStatusArray[ x ].eCurrentState )
         {
-          sprintf(pcWriteBuffer, "%s\t\t%lu\t\t%lu%%\r\n",
+            case eRunning:      cStatus = 'X';
+                                break;
+            case eReady:        cStatus = 'R';
+                                break;
+            case eBlocked:      cStatus = 'B';
+                                break;
+            case eSuspended:    cStatus = 'S';
+                                break;
+            case eDeleted:      cStatus = 'D';
+                                break;
+            case eInvalid:      /* Fall through. */
+            default:            /* Should not get here, but it is included
+                                to prevent static checking errors. */
+                                cStatus = ( char ) 0x00;
+                                break;
+        }
+        sprintf( pcWriteBuffer, "%u:%8s %05lu %02lu%% %c %02up %03ub\r\n",
+                  (unsigned int) pxTaskStatusArray[x].xTaskNumber, 
                   pxTaskStatusArray[x].pcTaskName,
                   pxTaskStatusArray[x].ulRunTimeCounter,
-                  ulStatsAsPercentage);
-        }
-        else
-        {
-          /* If the percentage is zero here then the task has
-               consumed less than 1% of the total run time. */
-          sprintf(pcWriteBuffer, "%s\t\t%lu\t\t<1%%\r\n",
-                  pxTaskStatusArray[x].pcTaskName,
-                  pxTaskStatusArray[x].ulRunTimeCounter);
-        }
-
+                  ulStatsAsPercentage, 
+                  cStatus, 
+                  (unsigned int) pxTaskStatusArray[x].uxCurrentPriority, 
+                  pxTaskStatusArray[x].usStackHighWaterMark);
         pcWriteBuffer += strlen((char *)pcWriteBuffer);
+
       }
     }
 
