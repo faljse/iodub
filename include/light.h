@@ -1,5 +1,4 @@
 #include <Controllino.h>
-#include <JC_Button.h>
 
 
 class Light;
@@ -8,7 +7,7 @@ class Light {
      uint8_t nr;
      uint8_t RoomNr;
      boolean on = false;
-     Button inputNr;
+     uint8_t inputNr;
      uint8_t outputNr;
      const char *name;
 

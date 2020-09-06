@@ -1,5 +1,4 @@
 #include <Controllino.h>
-#include <JC_Button.h>
 #include <EEPROM.h>
 #include <SPI.h>
 #include "light.h"
@@ -67,21 +66,15 @@ TimerHandle_t timerMixerHandler;
 
 void setup()
 {
-  for (int i = 0; i < COUNT_OF(lights); i++)
-  {
-    lights[i].inputNr.begin();
-  }
   dmx_init();
-  Serial.begin(19200);
+  Serial.begin(38400);
   Serial.println("--IODUB--");
-  NetEeprom.begin();
-  Udp.begin(1717);
   timerMixerHandler = xTimerCreate("Mixer", 2, pdTRUE,
                                    (void *)0,
                                    vMixerTimerCallback);
   xTimerStart(timerMixerHandler,0);
   xTaskCreate(TaskNetwork, "Network", 
-              128,         // Stack size
+              256,         // Stack size
               NULL,
               0,                   // Priority
               &taskNetworkHandle); // Task handler
@@ -97,6 +90,8 @@ void vMixerTimerCallback(TimerHandle_t xTimer)
 
 void TaskNetwork(void *pvParameters)
 {
+  NetEeprom.begin();
+  Udp.begin(1717);
   for (;;)
   {
     handlePacket();

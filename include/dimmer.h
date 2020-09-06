@@ -1,5 +1,4 @@
 #include <Controllino.h>
-#include <JC_Button.h>
 #include "dmx.h"
 
 class Dimmer;
