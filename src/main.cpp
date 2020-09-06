@@ -11,6 +11,11 @@
 #include <EthernetUdp.h>
 #include <NetEEPROM.h>
 #include <dmx.h>
+#include "MyFreeRTOSConfig.h"
+#include <Arduino_FreeRTOS.h>
+#include <task.h>
+#include "rtostools.h"
+
 #define TLight 1
 #define TDim 2
 #define COUNT_OF(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
@@ -20,6 +25,9 @@
 EthernetUDP Udp;
 void handlePacket();
 void timer_init();
+void printTasks();
+void TaskMixer(void *pvParameters);
+void TaskNetwork(void *pvParameters);
 
 
 Room room[] = {
@@ -48,17 +56,33 @@ Terminal terminals[] = {
 };
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
 
+
+TaskHandle_t taskMixerHandle, taskNetworkHandle;
+
 void setup()
 {
   for(int i=0; i<COUNT_OF(lights); i++) {
     lights[i].inputNr.begin();
   }
   dmx_init();
-  timer_init();
   Serial.begin(19200);
   Serial.println("--IODUB--");
   NetEeprom.begin();
   Udp.begin(1717);
+
+  xTaskCreate(TaskMixer, // Task function
+              "Mixer", // Task name
+              128, // Stack size 
+              NULL, 
+              0, // Priority
+              &taskMixerHandle); // Task handler
+
+  xTaskCreate(TaskNetwork, // Task function
+              "Network", // Task name
+              128, // Stack size 
+              NULL, 
+              0, // Priority
+              &taskNetworkHandle); // Task handler
 }
 
 int dir=1;
@@ -66,33 +90,44 @@ int cnt=0;
 unsigned long time=0;
 unsigned long td=0;
 
-void timer_init() {
-  TCCR1A = 0x00;      // Normal mode, => Disconnect Pin OC1  PWM Operation disabled
-  TCCR1B = 0x02;      // 16MHz clock with prescaler, TCNT1 increments every .5 uS (cs11 bit set)
-  OCR1A = 33333;   // = 16666 microseconds (each count is .5 us)
-  TIMSK1 |= (1 << OCIE1A); //Bit Output Compare A Match Interrupt Enable setzen
-}
-
 int8_t sgn(int8_t x) {
   if (x > 0) return 1;
   if (x < 0) return -1;
   return 0;
 }
 
-ISR(TIMER1_COMPA_vect) {
-  for(uint8_t i=0;i!=DMX_CHANNELS;i++) {
-    int16_t diff=dmx_set[i]-dmx_cur[i];
-    if(diff>10||diff<-10)
-      diff=diff/5;
-    dmx_cur[i]=dmx_cur[i]+diff;
+void TaskMixer(void *pvParameters)
+{
+  for(;;) {
+    for(uint8_t i=0;i!=DMX_CHANNELS;i++) {
+      int16_t diff=dmx_set[i]-dmx_cur[i];
+      dmx_cur[i]=dmx_cur[i]+diff;
+    }
+    delay(10);
+  }
+  
+}
+
+void TaskNetwork(void *pvParameters)
+{
+  for(;;) {
+    handlePacket();
   }
 }
 
 void loop() {
-  unsigned long tmp=millis();
-  td=tmp-time;
-  time=tmp;
-  handlePacket();
+  delay(3000);
+  printTasks();
+}
+
+char ptrTaskList[250];
+void printTasks() {
+    vTaskList(ptrTaskList);
+    Serial.println(F("**********************************"));
+    Serial.println(F("Task  State   Prio    Stack    Num")); 
+    Serial.println(F("**********************************"));
+    Serial.print(ptrTaskList);
+    Serial.println(F("**********************************"));
 }
 
 void handlePacket() {
