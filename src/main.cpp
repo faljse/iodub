@@ -11,10 +11,17 @@
 #include <EthernetUdp.h>
 #include <NetEEPROM.h>
 #include <dmx.h>
-#include "MyFreeRTOSConfig.h"
+extern "C" void vConfigureTimerForRunTimeStats( void ) {
+}
+
+extern "C" unsigned long vGetTimerForRunTimeStats( void ) {
+    return micros();
+}
+
 #include <Arduino_FreeRTOS.h>
 #include <task.h>
-#include "rtostools.h"
+#include <timers.h>
+
 
 #define TLight 1
 #define TDim 2
@@ -28,6 +35,7 @@ void timer_init();
 void printTasks();
 void TaskMixer(void *pvParameters);
 void TaskNetwork(void *pvParameters);
+ void vMixerTimerCallback( TimerHandle_t xTimer );
 
 
 Room room[] = {
@@ -57,7 +65,8 @@ Terminal terminals[] = {
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
 
 
-TaskHandle_t taskMixerHandle, taskNetworkHandle;
+TaskHandle_t taskNetworkHandle;
+TimerHandle_t timerMixerHandler;
 
 void setup()
 {
@@ -69,13 +78,25 @@ void setup()
   Serial.println("--IODUB--");
   NetEeprom.begin();
   Udp.begin(1717);
-
-  xTaskCreate(TaskMixer, // Task function
-              "Mixer", // Task name
-              128, // Stack size 
-              NULL, 
-              0, // Priority
-              &taskMixerHandle); // Task handler
+timerMixerHandler = xTimerCreate
+                   ( /* Just a text name, not used by the RTOS
+                     kernel. */
+                     "Mixer",
+                     /* The timer period in ticks, must be
+                     greater than 0. */
+                     2,
+                     /* The timers will auto-reload themselves
+                     when they expire. */
+                     pdTRUE,
+                     /* The ID is used to store a count of the
+                     number of times the timer has expired, which
+                     is initialised to 0. */
+                     ( void * ) 0,
+                     /* Each timer calls the same callback when
+                     it expires. */
+                     vMixerTimerCallback
+                   );
+  // xTimerStart(timerMixerHandler,0);
 
   xTaskCreate(TaskNetwork, // Task function
               "Network", // Task name
@@ -96,16 +117,12 @@ int8_t sgn(int8_t x) {
   return 0;
 }
 
-void TaskMixer(void *pvParameters)
-{
-  for(;;) {
+ void vMixerTimerCallback( TimerHandle_t xTimer )
+ {
     for(uint8_t i=0;i!=DMX_CHANNELS;i++) {
       int16_t diff=dmx_set[i]-dmx_cur[i];
       dmx_cur[i]=dmx_cur[i]+diff;
     }
-    delay(10);
-  }
-  
 }
 
 void TaskNetwork(void *pvParameters)
@@ -116,19 +133,83 @@ void TaskNetwork(void *pvParameters)
 }
 
 void loop() {
-  delay(3000);
+  vTaskDelay(200);
   printTasks();
 }
 
 char ptrTaskList[250];
+void tasks(char *pcWriteBuffer );
+
 void printTasks() {
-    vTaskList(ptrTaskList);
-    Serial.println(F("**********************************"));
-    Serial.println(F("Task  State   Prio    Stack    Num")); 
+    tasks(ptrTaskList);
     Serial.println(F("**********************************"));
     Serial.print(ptrTaskList);
-    Serial.println(F("**********************************"));
 }
+
+void tasks(char *pcWriteBuffer )
+{
+TaskStatus_t *pxTaskStatusArray;
+volatile UBaseType_t uxArraySize, x;
+uint32_t ulTotalRunTime, ulStatsAsPercentage;
+
+   /* Make sure the write buffer does not contain a string. */
+   *pcWriteBuffer = 0x00;
+
+   /* Take a snapshot of the number of tasks in case it changes while this
+   function is executing. */
+   uxArraySize = uxTaskGetNumberOfTasks();
+
+   /* Allocate a TaskStatus_t structure for each task.  An array could be
+   allocated statically at compile time. */
+   pxTaskStatusArray = (TaskStatus_t*) pvPortMalloc( uxArraySize * sizeof( TaskStatus_t ) );
+
+   if( pxTaskStatusArray != NULL )
+   {
+
+      /* Generate raw status information about each task. */
+      uxArraySize = uxTaskGetSystemState( pxTaskStatusArray,
+                                 uxArraySize,
+                                 &ulTotalRunTime );
+      /* For percentage calculations. */
+      ulTotalRunTime /= 100UL;
+      /* Avoid divide by zero errors. */
+      if( ulTotalRunTime > 0 )
+      {
+         /* For each populated position in the pxTaskStatusArray array,
+         format the raw data as human readable ASCII data. */
+         for( x = 0; x < uxArraySize; x++ )
+         {
+            /* What percentage of the total run time has the task used?
+            This will always be rounded down to the nearest integer.
+            ulTotalRunTimeDiv100 has already been divided by 100. */
+            ulStatsAsPercentage =
+                  pxTaskStatusArray[ x ].ulRunTimeCounter / ulTotalRunTime;
+
+            if( ulStatsAsPercentage > 0UL )
+            {
+               sprintf( pcWriteBuffer, "%s\t\t%lu\t\t%lu%%\r\n",
+                                 pxTaskStatusArray[ x ].pcTaskName,
+                                 pxTaskStatusArray[ x ].ulRunTimeCounter,
+                                 ulStatsAsPercentage );
+            }
+            else
+            {
+               /* If the percentage is zero here then the task has
+               consumed less than 1% of the total run time. */
+               sprintf( pcWriteBuffer, "%s\t\t%lu\t\t<1%%\r\n",
+                                 pxTaskStatusArray[ x ].pcTaskName,
+                                 pxTaskStatusArray[ x ].ulRunTimeCounter );
+            }
+
+            pcWriteBuffer += strlen( ( char * ) pcWriteBuffer );
+         }
+      }
+
+      /* The array is no longer needed, free the memory it consumes. */
+      vPortFree( pxTaskStatusArray );
+   }
+}
+
 
 void handlePacket() {
   int packetSize = Udp.parsePacket();

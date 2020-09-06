@@ -107,6 +107,11 @@ to exclude the API function. */
 #define configMAX(a,b)  ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a > _b ? _a : _b; })
 #define configMIN(a,b)  ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a < _b ? _a : _b; })
 
+#define configGENERATE_RUN_TIME_STATS  1
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()    vConfigureTimerForRunTimeStats()
+#define portGET_RUN_TIME_COUNTER_VALUE()            vGetTimerForRunTimeStats()
+
+
 /**
  * configASSERT macro: https://www.freertos.org/a00110.html#configASSERT
  */
