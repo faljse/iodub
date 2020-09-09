@@ -1,4 +1,5 @@
 #include <Controllino.h>
+#include <AnalogButtons.h>
 #include <EEPROM.h>
 #include <SPI.h>
 #include "light.h"
@@ -29,12 +30,14 @@ extern "C" unsigned long vGetTimerForRunTimeStats(void)
 #define COUNT_OF(x) ((sizeof(x) / sizeof(0 [x])) / ((size_t)(!(sizeof(x) % sizeof(0 [x])))))
 
 EthernetUDP Udp;
-void handlePacket();
+boolean handlePacket();
 void timer_init();
 void printTasks();
 void TaskMixer(void *pvParameters);
 void TaskNetwork(void *pvParameters);
 void vMixerTimerCallback(TimerHandle_t xTimer);
+void vPrintTimerCallback(TimerHandle_t xTimer);
+
 
 Room room[] = {
     Room(1, "Salon"),
@@ -62,7 +65,7 @@ Terminal terminals[] = {
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
 
 TaskHandle_t taskNetworkHandle;
-TimerHandle_t timerMixerHandler;
+TimerHandle_t timerMixerHandler, timerPrintHandler;
 
 void setup()
 {
@@ -72,13 +75,24 @@ void setup()
   timerMixerHandler = xTimerCreate("Mixer", 2, pdTRUE,
                                    (void *)0,
                                    vMixerTimerCallback);
+  timerPrintHandler = xTimerCreate("Print", 200, pdTRUE,
+                                   (void *)0,
+                                   vPrintTimerCallback);
   xTimerStart(timerMixerHandler,0);
+  xTimerStart(timerPrintHandler,0);
+
   xTaskCreate(TaskNetwork, "Network", 
-              256,         // Stack size
+              384,         // Stack size
               NULL,
               0,                   // Priority
               &taskNetworkHandle); // Task handler
 }
+
+void vPrintTimerCallback(TimerHandle_t xTimer)
+{
+  printTasks();
+}
+
 void vMixerTimerCallback(TimerHandle_t xTimer)
 {
   for (uint8_t i = 0; i != DMX_CHANNELS; i++)
@@ -94,23 +108,20 @@ void TaskNetwork(void *pvParameters)
   Udp.begin(1717);
   for (;;)
   {
-    handlePacket();
+    if(!handlePacket()){
+       vTaskDelay(1); // if there was no packet, there is also none queued.. sleep for 1 tick
+       // avg reply takes tick/2
+    }
   }
 }
 
-void loop()
-{
-  vTaskDelay(200);
-  printTasks();
-}
-
-char ptrTaskList[450];
+char ptrTaskList[200];
 void tasks(char *pcWriteBuffer);
 
 void printTasks()
 {
   tasks(ptrTaskList);
-  Serial.println(F("**********************************"));
+  Serial.println(F("--"));
   Serial.print(ptrTaskList);
 }
 
@@ -193,7 +204,7 @@ void tasks(char *pcWriteBuffer)
   }
 }
 
-void handlePacket()
+boolean handlePacket()
 {
   int packetSize = Udp.parsePacket();
   if (packetSize)
@@ -232,5 +243,7 @@ void handlePacket()
       Udp.endPacket();
       break;
     }
+    return true;
   }
+  return false;
 }

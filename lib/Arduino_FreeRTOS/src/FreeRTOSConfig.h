@@ -47,7 +47,7 @@
 
 // Define configUSE_IDLE_HOOK
 #ifndef configUSE_IDLE_HOOK
-    #define configUSE_IDLE_HOOK             1
+    #define configUSE_IDLE_HOOK             0
 #endif
 
 #define configUSE_TICK_HOOK                 0
@@ -56,7 +56,7 @@
 #define configMINIMAL_STACK_SIZE            ( 192 )
 #define configMAX_TASK_NAME_LEN             ( 8 )
 #define configUSE_TRACE_FACILITY            1
-#define configUSE_STATS_FORMATTING_FUNCTIONS 1
+#define configUSE_STATS_FORMATTING_FUNCTIONS 0
 #define configUSE_16_BIT_TICKS              1
 #define configIDLE_SHOULD_YIELD             1
 
@@ -76,7 +76,7 @@
 #define configUSE_TIMERS                    1
 #define configTIMER_TASK_PRIORITY           ( ( UBaseType_t ) 3 )
 #define configTIMER_QUEUE_LENGTH            ( ( UBaseType_t ) 10 )
-#define configTIMER_TASK_STACK_DEPTH        ( 85 )
+#define configTIMER_TASK_STACK_DEPTH        ( 192 )
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES               0
@@ -93,9 +93,9 @@ to exclude the API function. */
 
 #define INCLUDE_vTaskPrioritySet                1
 #define INCLUDE_uxTaskPriorityGet               1
-#define INCLUDE_vTaskDelete                     1
-#define INCLUDE_vTaskCleanUpResources           1
-#define INCLUDE_vTaskSuspend                    1
+#define INCLUDE_vTaskDelete                     0
+#define INCLUDE_vTaskCleanUpResources           0
+#define INCLUDE_vTaskSuspend                    0
 #define INCLUDE_vResumeFromISR                  1
 #define INCLUDE_vTaskDelayUntil                 1
 #define INCLUDE_vTaskDelay                      1
