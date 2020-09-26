@@ -35,6 +35,7 @@ void timer_init();
 void printTasks();
 void TaskMixer(void *pvParameters);
 void TaskNetwork(void *pvParameters);
+void TaskInput(void *pvParameters);
 void vMixerTimerCallback(TimerHandle_t xTimer);
 void vPrintTimerCallback(TimerHandle_t xTimer);
 
@@ -64,7 +65,7 @@ Terminal terminals[] = {
 };
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
 
-TaskHandle_t taskNetworkHandle;
+TaskHandle_t taskNetworkHandle, taskInputHandle;
 TimerHandle_t timerMixerHandler, timerPrintHandler;
 
 void setup()
@@ -86,6 +87,12 @@ void setup()
               NULL,
               0,                   // Priority
               &taskNetworkHandle); // Task handler
+
+  xTaskCreate(TaskInput, "Input", 
+              256,         // Stack size
+              NULL,
+              0,                   // Priority
+              &taskInputHandle); // Task handler
 }
 
 void vPrintTimerCallback(TimerHandle_t xTimer)
@@ -102,6 +109,25 @@ void vMixerTimerCallback(TimerHandle_t xTimer)
     dmx_cur[i] = dmx_cur[i] + diff;
   }
 }
+
+void TaskInput(void *pvParameters) {
+
+  int key=Serial.read();
+  switch(key) {
+    case '1':dmx_set[0]=0; break;
+    case '2':dmx_set[0]=30; break;
+    case '3':dmx_set[0]=100; break;
+    case '4':dmx_set[0]=200; break;
+    case '5':dmx_set[0]=255; break;
+    case '6':dmx_set[1]=0; break;
+    case '7':dmx_set[1]=30; break;
+    case '8':dmx_set[1]=100; break;
+    case '9':dmx_set[1]=200; break;
+    case '0':dmx_set[1]=255; break;
+  }
+}
+
+
 
 void TaskNetwork(void *pvParameters)
 {
