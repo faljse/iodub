@@ -45,6 +45,15 @@ ISR (USART3_TX_vect)
 	}
 }
 
+void printDMX()
+{
+  for(int i=0;i<DMX_CHANNELS;i++) {
+	  Serial.print(dmx_cur[i]);
+	  Serial.print(" ");
+  }
+  Serial.println();
+}
+
 void dmx_init() {
 	UBRR3   = (F_CPU / (DMX_BAUD * 16L) - 1);
 	UCSR3B|=(1<<TXEN3)|(1<<TXCIE3); // TXEN0 Transmitter enable / TXCIE0 TX complete interrupt enable 

@@ -54,8 +54,8 @@ Light lights[] = {
     Light(4, 2, false, CONTROLLINO_A1, CONTROLLINO_D11, "Lampe")};
 
 Dimmer dimmers[] = {
-    Dimmer(1, 1, 1, 2, "Leds am Tisch1"),
-    Dimmer(2, 1, 3, 4, "Leds am Tisch2")
+    Dimmer(1, 1, 0, 1, "Leds am Tisch1"),
+    Dimmer(2, 1, 2, 3, "Leds am Tisch2")
 
 };
 
@@ -91,6 +91,7 @@ void setup()
 void vPrintTimerCallback(TimerHandle_t xTimer)
 {
   printTasks();
+  printDMX();
 }
 
 void vMixerTimerCallback(TimerHandle_t xTimer)
@@ -124,6 +125,8 @@ void printTasks()
   Serial.println(F("--"));
   Serial.print(ptrTaskList);
 }
+
+
 
 void tasks(char *pcWriteBuffer)
 {
