@@ -35,10 +35,8 @@ void timer_init();
 void printTasks();
 void TaskMixer(void *pvParameters);
 void TaskNetwork(void *pvParameters);
-void TaskInput(void *pvParameters);
 void vMixerTimerCallback(TimerHandle_t xTimer);
 void vPrintTimerCallback(TimerHandle_t xTimer);
-
 
 Room room[] = {
     Room(1, "Salon"),
@@ -87,12 +85,6 @@ void setup()
               NULL,
               0,                   // Priority
               &taskNetworkHandle); // Task handler
-
-  xTaskCreate(TaskInput, "Input", 
-              256,         // Stack size
-              NULL,
-              0,                   // Priority
-              &taskInputHandle); // Task handler
 }
 
 void vPrintTimerCallback(TimerHandle_t xTimer)
@@ -110,27 +102,14 @@ void vMixerTimerCallback(TimerHandle_t xTimer)
   }
 }
 
-void TaskInput(void *pvParameters) {
-
-  int key=Serial.read();
-  switch(key) {
-    case '1':dmx_set[0]=0; break;
-    case '2':dmx_set[0]=30; break;
-    case '3':dmx_set[0]=100; break;
-    case '4':dmx_set[0]=200; break;
-    case '5':dmx_set[0]=255; break;
-    case '6':dmx_set[1]=0; break;
-    case '7':dmx_set[1]=30; break;
-    case '8':dmx_set[1]=100; break;
-    case '9':dmx_set[1]=200; break;
-    case '0':dmx_set[1]=255; break;
-  }
-}
-
-
-
 void TaskNetwork(void *pvParameters)
 {
+  byte mac[6] = { 0xCA, 0xFE, 0xBA, 0xBE, 0x00, 0x00 };
+  byte ip[4] = { 192, 168, 16, 111 };
+  byte dns[4] = { 8, 8, 8, 8 };
+  byte gw[4] = { 192, 168, 16, 1 };
+  byte subnet[4] = { 255, 255, 255, 0 };
+  NetEeprom.writeManualConfig(mac, ip, dns, gw, subnet);
   NetEeprom.begin();
   Udp.begin(1717);
   for (;;)
