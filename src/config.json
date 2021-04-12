@@ -1,0 +1,49 @@
+{
+    "lights": {
+      "1": {
+        "name": "OG/AZ/Lampe",
+        "type": "Relay",
+        "output": "CONTROLLINO_R0"},
+      "2": {
+        "name": "OG/AZ/Lampe2",
+        "type": "Relay",
+        "output": "CONTROLLINO_R1"},
+      "3": {
+        "name": "OG/SZ/Lampe",
+        "type": "Relay",
+        "output": "CONTROLLINO_R2"},
+      "4": {
+        "name": "OG/AZ/DimWW",
+        "type": "Dimmer",
+        "dmxCh": 1},
+      "5": {
+        "name": "OG/AZ/DimWW",
+        "type": "Dimmer",
+        "dmxCh": 2}
+      },
+    "actionsets": {
+        "1": { 
+          "name": "OG/AZ On",
+          "actions": [
+            {"idLight":1, "cmd": "On"},
+            {"idLight":2, "cmd": "On"},
+            {"idLight":4, "cmd": "Dim", "value": 100},
+            {"idLight":5, "cmd": "Dim", "value": 100}
+            ]},
+        "2": {
+          "name": "OG/AZ Off",
+          "actions": [
+            {"idLight":1, "cmd": "Off"},
+            {"idLight":2, "cmd": "Off"},
+            {"idLight":4, "cmd": "Dim", "value": 0},
+            {"idLight":5, "cmd": "Dim", "value": 0}
+            ]}
+    },
+    "buttons": {
+      "1": {
+        "name": "OG/AZ",
+        "A0": [1],
+        "A1": [1]
+      }
+    }
+  }

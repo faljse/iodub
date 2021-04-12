@@ -1,28 +1,26 @@
+#ifndef DIMMER_H
+#define DIMMER_H
+
 #include <Controllino.h>
 #include "dmx.h"
+#include <light.h>
 
 class Dimmer;
-class Dimmer {
+class Dimmer : public Light{
    public:
-     uint8_t nr;
-     uint8_t RoomNr;
      boolean on = false;
-     uint8_t chWW;
-     uint8_t valWW=0;
-     uint8_t chCW;
-     uint8_t valCW=0;
-     const char *name;
+     uint8_t ch;
+     uint8_t value=0;
 
-  Dimmer(uint8_t _nr, uint8_t _RoomNr, uint8_t _chWW, uint8_t _chCW, const char *_name): 
-  nr(_nr),
-  RoomNr(_RoomNr),
-  chWW(_chWW), 
-  chCW(_chCW), 
-  name(_name) {
+  Dimmer(uint8_t _id, uint8_t _ch): 
+  Light(_id),
+  ch(_ch) 
+   {
   }
 
   void writeDMX() {
-    dmx_set[chWW] = valWW;
-    dmx_set[chCW] = valCW;
+    dmx_set[ch] = value;
   }
 };
+
+#endif
