@@ -18,6 +18,15 @@ class Dimmer : public Light{
    {
   }
 
+  void cmd(Action *action){
+    switch (action->cmdType)
+    {
+      case CmdType::Dim:
+        value=action->value;
+        break;
+    }
+  }
+
   void writeDMX() {
     dmx_set[ch] = value;
   }

@@ -16,6 +16,20 @@ class Relay : public Light{
   outputNr(_outputNr)
    {
   }
+  void cmd(Action *action){
+    switch (action->cmdType)
+    {
+      case CmdType::On:
+        on=true;
+        break;
+      case CmdType::Off:
+        on=false;
+        break;
+      case CmdType::Toggle:
+        on=!on;
+        break;
+    }
+  }
 
   void toggle() {
     on=!on;

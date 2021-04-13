@@ -206,7 +206,7 @@ boolean handlePacket()
           for(int i=0;i<COUNT_OF(actions);i++) {
               Action &a=*actions[i];
               if(id==a.actionset_id)
-                lights[a.light_id]->cmd(a.cmdType, a.value);
+                lights[a.light_idx]->cmd(&a);
           }
           uint8_t chanNr = packetBuffer[3];
           uint8_t brightVal = packetBuffer[4];
