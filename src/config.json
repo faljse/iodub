@@ -17,7 +17,7 @@
         "type": "Dimmer",
         "dmxCh": 1},
       "5": {
-        "name": "OG/AZ/DimWW",
+        "name": "OG/AZ/DimCW",
         "type": "Dimmer",
         "dmxCh": 2}
       },

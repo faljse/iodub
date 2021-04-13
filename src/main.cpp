@@ -33,12 +33,13 @@ void TaskNetwork(void *pvParameters);
 void vMixerTimerCallback(TimerHandle_t xTimer);
 void vPrintTimerCallback(TimerHandle_t xTimer);
 uint8_t packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
-enum UdpCmd: uint8_t {SetLights=1, RunActions=2};
+enum UdpCmd: uint8_t {SetLight=1, RunAction=2};
 TaskHandle_t taskNetworkHandle, taskInputHandle;
 TimerHandle_t timerMixerHandler, timerPrintHandler;
 
 void setup()
 {
+  buildConfig();
   dmx_init();
   Serial.begin(38400);
   Serial.println("--IODUB--");
@@ -192,37 +193,31 @@ boolean handlePacket()
     uint16_t port = Udp.remotePort();
     // read the packet into packetBufffer
     Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
-    UdpCmd cmd=packetBuffer[0];
-    uint8_t count=packetBuffer[1];
     switch (packetBuffer[0])
     {
-    case SetLights:
-      break;
-    case RunActions:
-      for (uint8_t i = 0; i != count; i++)
-      {
-        uint8_t id = packetBuffer[2];
+      case SetLight:
+        break;
+      case RunAction:
+        uint8_t id=packetBuffer[1];
+        for (uint8_t i = 0; i < COUNT_OF(actions); i++)
         {
-          for(int i=0;i<COUNT_OF(actions);i++) {
-              Action &a=*actions[i];
-              if(id==a.actionset_id)
-                lights[a.light_idx]->cmd(&a);
+          Action *a=actions[i];
+          if(id==a->actionset_id) {
+            lights[a->light_idx]->cmd(a);
           }
-          uint8_t chanNr = packetBuffer[3];
-          uint8_t brightVal = packetBuffer[4];
-          Udp.beginPacket(remote, port);
-          Udp.write("OK");
-          Udp.endPacket();
         }
+        Udp.beginPacket(remote, port);
+        Udp.write("OK");
+        Udp.endPacket();
+        break;
+      default:
+          Udp.beginPacket(remote, port);
+          Udp.write("NOK");
+          Udp.endPacket();
+          break;
       }
-      break;
-    default:
-      Udp.beginPacket(remote, port);
-      Udp.write("NOK");
-      Udp.endPacket();
-      break;
     }
-    return true;
+  else {
+    return false;
   }
-  return false;
 }

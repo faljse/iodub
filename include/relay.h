@@ -29,6 +29,7 @@ class Relay : public Light{
         on=!on;
         break;
     }
+    send();
   }
 
   void toggle() {
