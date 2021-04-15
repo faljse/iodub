@@ -2,35 +2,23 @@
 #define RELAY_H
 
 #include <Controllino.h>
-#include "light.h"
-
 
 class Relay;
-class Relay : public Light{
+class Relay{
    public:
+     uint8_t id;
      boolean on = false;
      uint8_t inputNr;
      uint8_t outputNr;
 
   Relay(){};
   Relay(uint8_t _id, uint8_t _outputNr): 
-  Light(_id),
+  id(_id),
   outputNr(_outputNr)
    {
   }
-  void cmd(Action *action){
-    switch (action->cmdType)
-    {
-      case CmdType::On:
-        on=true;
-        break;
-      case CmdType::Off:
-        on=false;
-        break;
-      case CmdType::Toggle:
-        on=!on;
-        break;
-    }
+  void set(boolean _on){
+    on=_on;
     send();
   }
 

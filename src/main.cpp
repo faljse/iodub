@@ -8,7 +8,6 @@
 #include <NetEEPROM.h>
 #include <dmx.h>
 #include <utility/w5100.h>
-#include "config.h"
 extern "C" void vConfigureTimerForRunTimeStats(void)
 {
 }
@@ -21,6 +20,7 @@ extern "C" unsigned long vGetTimerForRunTimeStats(void)
 #include <Arduino_FreeRTOS.h>
 #include <task.h>
 #include <timers.h>
+#include "config.h"
 
 #define COUNT_OF(x) ((sizeof(x) / sizeof(0 [x])) / ((size_t)(!(sizeof(x) % sizeof(0 [x])))))
 
@@ -40,6 +40,7 @@ TimerHandle_t timerMixerHandler, timerPrintHandler;
 void setup()
 {
   buildConfig();
+
   dmx_init();
   Serial.begin(38400);
   Serial.println("--IODUB--");
@@ -63,6 +64,7 @@ void vPrintTimerCallback(TimerHandle_t xTimer)
 {
   printTasks();
   printDMX();
+  asg[0].next();
 }
 
 void vMixerTimerCallback(TimerHandle_t xTimer)
@@ -199,8 +201,11 @@ boolean handlePacket()
         break;
       case RunAction:
         uint8_t id=packetBuffer[1];
-        // for (uint8_t i = 0; i < COUNT_OF(actions); i++)
+        for (uint8_t i = 0; i < COUNT_OF(asg); i++)
         {
+          if(asg->id==id) {
+            asg->next();
+          }
           // Action *a=actions[i];
           // if(id==a->actionset_id) {
           //  lights[a->light_idx]->cmd(a);

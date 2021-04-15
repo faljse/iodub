@@ -17,5 +17,12 @@ class ActionSet {
   actions_idx_len(_actions_len),
   actions(_actions)
   {};
+
+  void run(){
+    Serial.println(actions_idx_len);
+    for(int i=0;i<actions_idx_len;i++) {
+      actions[i].exec();
+    }
+  }
 };
 #endif
