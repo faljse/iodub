@@ -199,12 +199,12 @@ boolean handlePacket()
         break;
       case RunAction:
         uint8_t id=packetBuffer[1];
-        for (uint8_t i = 0; i < COUNT_OF(actions); i++)
+        // for (uint8_t i = 0; i < COUNT_OF(actions); i++)
         {
-          Action *a=actions[i];
-          if(id==a->actionset_id) {
-            lights[a->light_idx]->cmd(a);
-          }
+          // Action *a=actions[i];
+          // if(id==a->actionset_id) {
+          //  lights[a->light_idx]->cmd(a);
+          //}
         }
         Udp.beginPacket(remote, port);
         Udp.write("OK");

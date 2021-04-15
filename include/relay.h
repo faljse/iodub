@@ -2,7 +2,9 @@
 #define RELAY_H
 
 #include <Controllino.h>
-#include <light.h>
+#include "light.h"
+
+
 class Relay;
 class Relay : public Light{
    public:
@@ -10,7 +12,7 @@ class Relay : public Light{
      uint8_t inputNr;
      uint8_t outputNr;
 
-   
+  Relay(){};
   Relay(uint8_t _id, uint8_t _outputNr): 
   Light(_id),
   outputNr(_outputNr)

@@ -3,7 +3,7 @@
 
 #include <Controllino.h>
 #include "dmx.h"
-#include <light.h>
+#include "light.h"
 
 class Dimmer;
 class Dimmer : public Light{
@@ -12,6 +12,7 @@ class Dimmer : public Light{
      uint8_t ch;
      uint8_t value=0;
 
+  Dimmer(){};
   Dimmer(uint8_t _id, uint8_t _ch): 
   Light(_id),
   ch(_ch) 
