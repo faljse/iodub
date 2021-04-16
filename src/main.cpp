@@ -1,12 +1,10 @@
 #include <Controllino.h>
-#include <AnalogButtons.h>
 #include <EEPROM.h>
 #include <SPI.h>
 #include <string.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 #include <NetEEPROM.h>
-#include <dmx.h>
 #include <utility/w5100.h>
 extern "C" void vConfigureTimerForRunTimeStats(void)
 {
@@ -21,6 +19,10 @@ extern "C" unsigned long vGetTimerForRunTimeStats(void)
 #include <task.h>
 #include <timers.h>
 #include "config.h"
+#include "analogmultibutton.h"
+
+#include "dmx.h"
+
 
 #define COUNT_OF(x) ((sizeof(x) / sizeof(0 [x])) / ((size_t)(!(sizeof(x) % sizeof(0 [x])))))
 
@@ -69,11 +71,8 @@ void vPrintTimerCallback(TimerHandle_t xTimer)
 
 void vMixerTimerCallback(TimerHandle_t xTimer)
 {
-  for (uint8_t i = 0; i != DMX_CHANNELS; i++)
-  {
-    int16_t diff = dmx_set[i] - dmx_cur[i];
-    dmx_cur[i] = dmx_cur[i] + diff;
-  }
+  dmx_fade();
+
 }
 
 void TaskNetwork(void *pvParameters)

@@ -2,9 +2,7 @@
 #define ACTION_H
 #include <Controllino.h>
 #include "relay.h"
-
 #include "dimmer.h"
-
 
 
 enum  CmdType{Off=0,On=1,Toggle=2,Dim=3};

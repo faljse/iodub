@@ -25,7 +25,7 @@ class Dimmer{
   }
 
   void writeDMX() {
-    dmx_set[ch] = value;
+    dmx_setch(ch,value);
   }
 };
 

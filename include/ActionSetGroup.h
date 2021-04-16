@@ -1,7 +1,6 @@
 #ifndef ACTIONSETGROUP_H
 #define ACTIONSETGROUP_H
 #include <Controllino.h>
-#include "action.h"
 #include "actionset.h"
 
 

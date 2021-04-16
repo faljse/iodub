@@ -7,7 +7,7 @@
 #include "action.h"
 #include "actionset.h"
 #include "actionsetgroup.h"
-#include "mbutton.h"
+#include "analogmultibutton.h"
 #include "buttonaction.h"
 
 Relay relay[3];
@@ -19,6 +19,7 @@ Action actions0_1[4];
 ActionSet as1[2];
 Action actions1_0[1];
 Action actions1_1[3];
+AnalogMultiButton buttons[2];
 void buildConfig() {
 relay[0] = Relay(1, CONTROLLINO_R0);
 pinMode(CONTROLLINO_R0, OUTPUT);
@@ -42,6 +43,10 @@ asg[0]=ActionSetGroup(1, 2, as0);
 as1[0]=ActionSet(1, 1, actions1_0);
 as1[1]=ActionSet(1, 3, actions1_1);
 asg[1]=ActionSetGroup(2, 2, as1);
-
+const int voltages[4] = {0, 320, 678, 900};
+const ActionSetGroup asg_b1[4] = {asg[0], asg[1],asg[0],asg[1]};
+buttons[0] = AnalogMultiButton(CONTROLLINO_A0, 4, voltages, asg_b1, 20, 1024);
+const ActionSetGroup asg_b2[4] = {asg[1],asg[0],asg[1],asg[0]};
+buttons[1] = AnalogMultiButton(CONTROLLINO_A1, 4, voltages, asg_b2, 20, 1024);
 }
 #endif
