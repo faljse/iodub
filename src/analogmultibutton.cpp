@@ -35,6 +35,11 @@ AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], con
   this->total = total;
   this->debounceDuration = debounceDuration;
   this->analogResolution = analogResolution;
+  this->actions[0]=actions[0];
+  this->actions[1]=actions[1];
+  this->actions[2]=actions[2];
+  this->actions[3]=actions[3];
+
 
   for(int i = 0; i < total; i++) {
     // determine value boundaries, so we can easily determine which button has the closest value to the current analogRead()
@@ -72,7 +77,9 @@ void AnalogMultiButton::update()
 	buttonOnRelease = buttonPressed;
       
     buttonPressed = button;
+    this->actions[button].next();
   }
+
 }
 
 boolean AnalogMultiButton::isPressedBefore(int button, int duration)

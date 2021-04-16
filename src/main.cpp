@@ -66,7 +66,6 @@ void vPrintTimerCallback(TimerHandle_t xTimer)
 {
   printTasks();
   printDMX();
-  asg[0].next();
 }
 
 void vMixerTimerCallback(TimerHandle_t xTimer)

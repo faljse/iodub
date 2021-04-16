@@ -78,6 +78,7 @@ class AnalogMultiButton
 
     int getButtonForAnalogValue(int value);
     boolean debounceButton(int button);
+    ActionSetGroup actions[4];
 };
 
 #endif
