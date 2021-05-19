@@ -77,7 +77,9 @@ void AnalogMultiButton::update()
 	buttonOnRelease = buttonPressed;
       
     buttonPressed = button;
-    this->actions[button].next();
+    if(button!=0) {
+      this->actions[button-1].next();
+    }
   }
 
 }

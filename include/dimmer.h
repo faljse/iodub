@@ -1,6 +1,5 @@
 #ifndef DIMMER_H
 #define DIMMER_H
-
 #include <Controllino.h>
 #include "dmx.h"
 
@@ -8,7 +7,7 @@ class Dimmer;
 class Dimmer{
    public:
     uint8_t id;
-    boolean on = false;
+    bool on = false;
     uint8_t ch;
     uint8_t value=0;
 

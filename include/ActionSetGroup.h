@@ -21,8 +21,8 @@ class ActionSetGroup {
   {};
 
   void next() {
+    Serial.print("pos: ");
     Serial.println(pos);
-    Serial.println(actionset_idx_len);
     pos=(pos+1)%actionset_idx_len;
     actionSet[pos].run();
   }

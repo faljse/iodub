@@ -32,7 +32,7 @@
 class AnalogMultiButton
 {
   public:
-    static const int MAX_BUTTONS = 4;
+    static const int MAX_BUTTONS = 5;
 
     // pin - the pin to read
     // total - the total number of buttons

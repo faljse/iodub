@@ -32,11 +32,12 @@ void timer_init();
 void printTasks();
 void TaskMixer(void *pvParameters);
 void TaskNetwork(void *pvParameters);
+void TaskButtons(void *pvParameters);
 void vMixerTimerCallback(TimerHandle_t xTimer);
 void vPrintTimerCallback(TimerHandle_t xTimer);
 uint8_t packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
 enum UdpCmd: uint8_t {SetLight=1, RunAction=2};
-TaskHandle_t taskNetworkHandle, taskInputHandle;
+TaskHandle_t taskNetworkHandle, taskButtonsHandle;
 TimerHandle_t timerMixerHandler, timerPrintHandler;
 
 void setup()
@@ -60,6 +61,13 @@ void setup()
               NULL,
               0,                   // Priority
               &taskNetworkHandle); // Task handler
+  xTaskCreate(TaskButtons, "Button", 
+              384,         // Stack size
+              NULL,
+              0,                   // Priority
+              &taskButtonsHandle); // Task handler
+              
+
 }
 
 void vPrintTimerCallback(TimerHandle_t xTimer)
@@ -71,7 +79,6 @@ void vPrintTimerCallback(TimerHandle_t xTimer)
 void vMixerTimerCallback(TimerHandle_t xTimer)
 {
   dmx_fade();
-
 }
 
 void TaskNetwork(void *pvParameters)
@@ -88,22 +95,28 @@ void TaskNetwork(void *pvParameters)
   {
     if(!handlePacket()){
        vTaskDelay(1); // if there was no packet, there is also none queued.. sleep for 1 tick
-       // avg reply takes tick/2
+       // avg first reply takes tick/2
     }
   }
 }
 
+void TaskButtons(void *pvParameters)
+{
+
+  for(;;){
+      for(uint8_t i=0; i<COUNT_OF(buttons); i++) {
+      buttons[i].update();
+    }
+  }
+}
 char ptrTaskList[200];
 void tasks(char *pcWriteBuffer);
-
 void printTasks()
 {
   tasks(ptrTaskList);
   Serial.println(F("--"));
   Serial.print(ptrTaskList);
 }
-
-
 
 void tasks(char *pcWriteBuffer)
 {
