@@ -15,12 +15,13 @@ class Action {
      Relay *relay;
      CmdType cmdType;
      uint8_t value=0;
+     uint8_t pos=0;
 
    Action(){};
-  Action(Dimmer *_dimmer, Relay *_relay, CmdType _cmdType, uint8_t _value = 0): 
+  Action(Dimmer *_dimmer, Relay *_relay, CmdType _cmdType, uint8_t _pos, uint8_t _value = 0): 
   dimmer(_dimmer),
-    relay(_relay),
-
+  relay(_relay),
+  pos(_pos),
   cmdType(_cmdType), 
   value(_value)
   {};
@@ -28,16 +29,11 @@ class Action {
   void exec() {
 
     if(dimmer!=0) {
-      Serial.println("dim");
-      Serial.println(value);
       dimmer->dim(value);
     }
    
     else if(relay!=0){
-      Serial.println("relay");
-      Serial.println(cmdType);
       relay->set(cmdType);
-
     }
   }
 };

@@ -32,6 +32,9 @@ class Relay{
     char strOn[4];
     snprintf(strNr, 10, "%d",outputNr);
     snprintf(strOn, 10, "%s",on?"ON":"OFF");
+    Serial.print("send");
+    Serial.print(strNr);
+    Serial.println(strOn);
   }
 };
 #endif

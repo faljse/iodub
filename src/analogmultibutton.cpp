@@ -78,6 +78,7 @@ void AnalogMultiButton::update()
       
     buttonPressed = button;
     if(button!=0) {
+      Serial.print(button);
       this->actions[button-1].next();
     }
   }

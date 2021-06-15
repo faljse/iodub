@@ -5,9 +5,10 @@ volatile unsigned char dmx_set[DMX_CHANNELS];
 
 void printDMX()
 {
+  Serial.print("DMX: ");
   for(int i=0;i<DMX_CHANNELS;i++) {
 	  Serial.print(dmx_cur[i]);
-	  Serial.print(" ");
+	  //Serial.print(" ");
   }
   Serial.println();
 }

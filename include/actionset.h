@@ -7,8 +7,8 @@ class ActionSet;
 class ActionSet {
   
    public:
-     uint8_t id;
-     uint8_t actions_idx_len;
+     uint8_t id=0;
+     uint8_t actions_idx_len=0;
      Action *actions;
 
   ActionSet(){};
@@ -20,8 +20,10 @@ class ActionSet {
 
   void run(){
     Serial.println(actions_idx_len);
+    Serial.println(id);
+
     for(int i=0;i<actions_idx_len;i++) {
-      actions[i].exec();
+       actions[i].exec();
     }
   }
 };
