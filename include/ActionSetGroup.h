@@ -22,9 +22,6 @@ class ActionSetGroup {
 
   void next() {
     pos=pos+1;
-    Serial.print("pos: ");
-    Serial.print(pos);
-    Serial.print("/");
     if(!runPos(pos)){
       pos=1;
       runPos(pos);
