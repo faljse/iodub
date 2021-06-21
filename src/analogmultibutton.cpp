@@ -24,7 +24,7 @@
  */
 
 #include <Arduino.h>
-#include "AnalogMultiButton.h"
+#include "analogmultibutton.h"
 
 AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], ActionSetGroup *actions[], unsigned int debounceDuration, unsigned int analogResolution)
 {

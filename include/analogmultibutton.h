@@ -27,7 +27,7 @@
 #define ANALOG_MULTI_BUTTON_H
 
 #include <Arduino.h>
-#include "ActionSetGroup.h"
+#include "actionsetgroup.h"
 
 class AnalogMultiButton
 {
