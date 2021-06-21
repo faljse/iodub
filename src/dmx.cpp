@@ -7,10 +7,8 @@ void printDMX()
 {
   Serial.print("DMX: ");
   for(int i=0;i<DMX_CHANNELS;i++) {
-	  dmx_cur[i]=100;
-	  Serial.print(dmx_cur[i]);
-	  
-	  //Serial.print(" ");
+	  Serial.print(dmx_cur[i]);	  
+	  Serial.print(",");
   }
   Serial.println();
 }
