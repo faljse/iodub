@@ -104,9 +104,9 @@ void vMixerTimerCallback(TimerHandle_t xTimer)
 void TaskNetwork(void *pvParameters)
 {
   byte mac[6] = { 0xCA, 0xFE, 0xBA, 0xBE, 0x00, 0x00 };
-  byte ip[4] = { 192, 168, 16, 2 };
+  byte ip[4] = { 192, 168, 0, 2 };
   byte dns[4] = { 8, 8, 8, 8 };
-  byte gw[4] = { 192, 168, 16, 1 };
+  byte gw[4] = { 192, 168, 0, 1 };
   byte subnet[4] = { 255, 255, 255, 0 };
   NetEeprom.writeManualConfig(mac, ip, dns, gw, subnet);
   NetEeprom.begin();
