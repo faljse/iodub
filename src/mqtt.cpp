@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include <string.h>
-#include <config.h>
+#include "config.h"
 
 
 #include "mqtt.h"
