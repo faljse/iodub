@@ -113,14 +113,15 @@ void TaskNetwork(void *pvParameters)
   ethClient = new EthernetClient();
   psclient = new PubSubClient(*ethClient);
   IPAddress server(192,168,0,1); 
-  psclient->setCallback(callbackMQTT);
 
 
-  psclient->setServer(server,1883);
+  psclient->setServer(server, 1883);
   for (;;)
   {
       if (!psclient->connected()) {
         reconnectMQTT(psclient);
+        psclient->setCallback(callbackMQTT);
+        psclient->subscribe("home/light/#");
       }
       psclient->loop();
       if(!ethClient->available()) {

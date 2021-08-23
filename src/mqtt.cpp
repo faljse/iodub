@@ -24,5 +24,7 @@ void reconnectMQTT(PubSubClient *psc) {
 }
 
 void callbackMQTT(char* topic, byte* payload, unsigned int length) {
-    
+    Serial.print(topic);
+    Serial.println();
+
 }
