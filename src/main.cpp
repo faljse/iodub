@@ -112,7 +112,7 @@ void TaskNetwork(void *pvParameters)
   NetEeprom.begin();
   ethClient = new EthernetClient();
   psclient = new PubSubClient(*ethClient);
-  IPAddress server(192,168,16,1); 
+  IPAddress server(192,168,0,1); 
   psclient->setCallback(callbackMQTT);
 
 
