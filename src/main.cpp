@@ -6,6 +6,7 @@
 #include <EthernetUdp.h>
 #include <NetEEPROM.h>
 #include <utility/w5100.h>
+#include <mqtt.h>
 extern "C" void vConfigureTimerForRunTimeStats(void)
 {
 }
@@ -20,14 +21,10 @@ extern "C" unsigned long vGetTimerForRunTimeStats(void)
 #include <timers.h>
 #include "config.h"
 #include "analogmultibutton.h"
-
 #include "dmx.h"
-
 
 #define COUNT_OF(x) ((sizeof(x) / sizeof(0 [x])) / ((size_t)(!(sizeof(x) % sizeof(0 [x])))))
 
-EthernetUDP Udp;
-boolean handlePacket();
 void timer_init();
 void printTasks();
 void printAnalog();
@@ -36,10 +33,12 @@ void TaskNetwork(void *pvParameters);
 void vMixerTimerCallback(TimerHandle_t xTimer);
 void vButtonTimerCallback(TimerHandle_t xTimer);
 void vPrintTimerCallback(TimerHandle_t xTimer);
-uint8_t packetBuffer[UDP_TX_PACKET_MAX_SIZE]; //buffer to hold incoming packet,
-enum UdpCmd: uint8_t {SetLight=1, RunAction=2};
+
 TaskHandle_t taskNetworkHandle, taskButtonsHandle;
 TimerHandle_t timerMixerHandler, timerPrintHandler, timerButtonHandler;
+
+EthernetClient *ethClient;
+PubSubClient *psclient;
 
 void setup()
 {
@@ -99,22 +98,34 @@ void vMixerTimerCallback(TimerHandle_t xTimer)
   dmx_fade();
 }
 
+
+
+
 void TaskNetwork(void *pvParameters)
 {
   byte mac[6] = { 0xCA, 0xFE, 0xBA, 0xBE, 0x00, 0x00 };
-  byte ip[4] = { 192, 168, 16, 111 };
+  byte ip[4] = { 192, 168, 16, 2 };
   byte dns[4] = { 8, 8, 8, 8 };
   byte gw[4] = { 192, 168, 16, 1 };
   byte subnet[4] = { 255, 255, 255, 0 };
   NetEeprom.writeManualConfig(mac, ip, dns, gw, subnet);
   NetEeprom.begin();
-  Udp.begin(1717);
+  ethClient = new EthernetClient();
+  psclient = new PubSubClient(*ethClient);
+  IPAddress server(192,168,16,1); 
+  psclient->setCallback(callbackMQTT);
+
+
+  psclient->setServer(server,1883);
   for (;;)
   {
-    if(!handlePacket()){
-       vTaskDelay(1); // if there was no packet, there is also none queued.. sleep for 1 tick
-       // avg first reply takes tick/2
-    }
+      if (!psclient->connected()) {
+        reconnectMQTT(psclient);
+      }
+      psclient->loop();
+      if(!ethClient->available()) {
+        vTaskDelay(1); // sleep for 1 tick to avoid busy loop
+      }
   }
 }
 
@@ -216,46 +227,5 @@ void tasks(char *pcWriteBuffer)
 
     /* The array is no longer needed, free the memory it consumes. */
     vPortFree(pxTaskStatusArray);
-  }
-}
-
-boolean handlePacket()
-{
-  int packetSize = Udp.parsePacket();
-  if (packetSize)
-  {
-    IPAddress remote = Udp.remoteIP();
-    uint16_t port = Udp.remotePort();
-    // read the packet into packetBufffer
-    Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
-    switch (packetBuffer[0])
-    {
-      case SetLight:
-        break;
-      case RunAction:
-        uint8_t id=packetBuffer[1];
-        for (uint8_t i = 0; i < COUNT_OF(asg); i++)
-        {
-          if(asg->id==id) {
-            asg->next();
-          }
-          // Action *a=actions[i];
-          // if(id==a->actionset_id) {
-          //  lights[a->light_idx]->cmd(a);
-          //}
-        }
-        Udp.beginPacket(remote, port);
-        Udp.write("OK");
-        Udp.endPacket();
-        break;
-      default:
-          Udp.beginPacket(remote, port);
-          Udp.write("NOK");
-          Udp.endPacket();
-          break;
-      }
-    }
-  else {
-    return false;
   }
 }
