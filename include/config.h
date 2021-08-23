@@ -11,7 +11,10 @@
 #include "buttonaction.h"
 
 Relay relay[5];
+const uint8_t relaySize=5;
 Dimmer dimmer[22];
+const uint8_t dimmerSize=22;
+
 ActionSetGroup asg[9];
 Action actions0[0];
 Action actions1[2];

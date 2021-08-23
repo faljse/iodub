@@ -98,9 +98,6 @@ void vMixerTimerCallback(TimerHandle_t xTimer)
   dmx_fade();
 }
 
-
-
-
 void TaskNetwork(void *pvParameters)
 {
   byte mac[6] = { 0xCA, 0xFE, 0xBA, 0xBE, 0x00, 0x00 };

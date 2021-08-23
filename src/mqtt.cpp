@@ -1,4 +1,6 @@
 #include <SPI.h>
+#include <string.h>
+
 
 #include "mqtt.h"
 
@@ -22,9 +24,15 @@ void reconnectMQTT(PubSubClient *psc) {
     }
   }
 }
-
+const char* dimmerPath="home/light/dimmer/";
 void callbackMQTT(char* topic, byte* payload, unsigned int length) {
-    Serial.print(topic);
-    Serial.println();
+    if (strncmp(topic, dimmerPath, strlen(dimmerPath)-1)==0)
+    {
+        char *idChar = topic+strlen(dimmerPath);
+        Serial.print(idChar);
+        Serial.println();
+    }
+    
+
 
 }
