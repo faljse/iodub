@@ -2,6 +2,9 @@
 #define DIMMER_H
 #include <Controllino.h>
 #include "dmx.h"
+#include "mqtt.h"
+
+
 
 class Dimmer;
 class Dimmer{
@@ -26,6 +29,14 @@ class Dimmer{
   void writeDMX() {
     dmx_setch(ch,value);
   }
+
+  void sendMQTT() {
+    const char *topic="home/light/dimmer/000/state";
+    sprintf((char *)topic, "home/light/dimmer/%d/state", id);
+    psclient->publish(topic, &value,1);
+
+  }
+
 };
 
 #endif

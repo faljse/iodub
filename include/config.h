@@ -10,7 +10,9 @@
 #include "analogmultibutton.h"
 #include "buttonaction.h"
 
+
 void buildConfig();
+
 
 extern Relay relay[5];
 const uint8_t relaySize=5;
