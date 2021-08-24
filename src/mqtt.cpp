@@ -1,10 +1,9 @@
 #include <SPI.h>
-#include <string.h>
 #include "config.h"
+#include <string.h>
 
 
 #include "mqtt.h"
-
 void reconnectMQTT(PubSubClient *psc) {
   // Loop until we're reconnected
   while (!psc->connected()) {
@@ -25,24 +24,24 @@ void reconnectMQTT(PubSubClient *psc) {
     }
   }
 }
-const char* dimmerPath="home/light/dimmer/";
-void callbackMQTT(char* topic, byte* payload, unsigned int length) {
-    if (strncmp(topic, dimmerPath, strlen(dimmerPath)-1)==0)
-    {
-        uint8_t tLength = strlen(topic);
-        if(tLength <= strlen(dimmerPath))
-            return;
-        uint8_t id = atoi(topic + strlen(dimmerPath));
-        char valStr[length + 1];
-        valStr[length + 1] = '\n';
-        memcpy(valStr, payload, length);
-        uint8_t value = atoi(valStr);
+const String dimmerPath="home/light/dimmer/";
+void callbackMQTT(char* _topic, byte* _payload, unsigned int length) {
+        String topic = String(_topic);
+        char ptmp[length+1];
+        ptmp[length]='\0';
+        memcpy(ptmp, _payload, length);
+        String payload = String(ptmp);
+      if(topic.startsWith(dimmerPath))
+      {
+        uint8_t id =  topic.substring(dimmerPath.length()).toInt();
+        uint8_t value = payload.toInt();
 
         for(uint8_t i=0;i<dimmerSize;i++) {
             if(dimmer[i].id == id)
                 dimmer[i].value = value;
                 
         }
+        Serial.print(id);
         Serial.print(value);
         Serial.println();
     }
