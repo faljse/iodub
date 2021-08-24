@@ -33,8 +33,19 @@ void callbackMQTT(char* _topic, byte* _payload, unsigned int length) {
         String payload = String(ptmp);
       if(topic.startsWith(dimmerPath))
       {
-        uint8_t id =  topic.substring(dimmerPath.length()).toInt();
+        String subTopic =  topic.substring(dimmerPath.length());
+        int8_t slashIdx=subTopic.indexOf('/');
+        if(slashIdx==-1)
+          return;
+        uint8_t id=subTopic.substring(0,slashIdx).toInt();
+        String state=subTopic.substring(slashIdx);
         uint8_t value = payload.toInt();
+        Serial.print(id);
+        Serial.print(":");
+        Serial.print(value);
+        Serial.print(":");
+        Serial.print(value);
+        Serial.println(state);
 
         for(uint8_t i=0;i<dimmerSize;i++) {
             if(dimmer[i].id == id)

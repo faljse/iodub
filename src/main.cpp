@@ -11,7 +11,7 @@ extern "C" void vConfigureTimerForRunTimeStats(void)
 {
 }
 
-extern "C" unsigned long vGetTimerForRunTimeStats(void)
+extern "C" int vGetTimerForRunTimeStats(void)
 {
   return micros();
 }
