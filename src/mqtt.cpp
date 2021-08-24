@@ -49,6 +49,8 @@ void callbackMQTT(char* _topic, byte* _payload, unsigned int length) {
             if(dimmer[i].id == id) {
                 dimmer[i].value = payload.toInt();
                 dimmer[i].writeDMX();
+                dimmer[i].sendMQTT(); //todo: testing only
+
             }
         }
     }

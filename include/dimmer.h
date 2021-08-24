@@ -32,8 +32,10 @@ class Dimmer{
 
   void sendMQTT() {
     const char *topic="home/light/dimmer/000/state";
-    sprintf((char *)topic, "home/light/dimmer/%d/state", id);
-    psclient->publish(topic, &value,1);
+    const char *payload="000";
+    sprintf((char *)topic, "home/light/dimmer/%d/stat1", id);
+    sprintf((char *)payload, "%d", id);
+    psclient->publish(topic, payload);
 
   }
 

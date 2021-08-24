@@ -30,6 +30,7 @@ class Action {
 
     if(dimmer!=0) {
       dimmer->dim(value);
+      dimmer->sendMQTT();
     }
    
     else if(relay!=0){
