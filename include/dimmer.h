@@ -34,7 +34,7 @@ class Dimmer{
     const char *topic="home/light/dimmer/000/state";
     const char *payload="000";
     sprintf((char *)topic, "home/light/dimmer/%d/stat1", id);
-    sprintf((char *)payload, "%d", id);
+    sprintf((char *)payload, "%d", value);
     psclient->publish(topic, payload);
 
   }
