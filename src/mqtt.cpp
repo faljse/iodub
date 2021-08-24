@@ -48,7 +48,7 @@ void callbackMQTT(char* _topic, byte* _payload, unsigned int length) {
         for(uint8_t i=0;i<dimmerSize;i++) {
             if(dimmer[i].id == id) {
                 dimmer[i].value = payload.toInt();
-                dimmer->writeDMX();
+                dimmer[i].writeDMX();
             }
         }
     }
