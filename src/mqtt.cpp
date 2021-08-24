@@ -44,11 +44,11 @@ void callbackMQTT(char* _topic, byte* _payload, unsigned int length) {
         Serial.print(id);
         Serial.print(":");
         Serial.print(payload.toInt());
-        Serial.println(state);
 
         for(uint8_t i=0;i<dimmerSize;i++) {
             if(dimmer[i].id == id)
                 dimmer[i].value = payload.toInt();
+                dimmer->writeDMX();
         }
     }
     
