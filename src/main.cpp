@@ -88,8 +88,8 @@ void vPrintTimerCallback(TimerHandle_t xTimer)
 void vButtonTimerCallback(TimerHandle_t xTimer)
 {
   
-  for(uint8_t i=0; i<COUNT_OF(buttons); i++) {
-    buttons[i].update();
+  for(uint8_t i=0; i<COUNT_OF(abuttons); i++) {
+    abuttons[i].update();
   }
 }
 
@@ -217,7 +217,7 @@ void tasks(char *pcWriteBuffer)
                   ulStatsAsPercentage, 
                   cStatus, 
                   (unsigned int) pxTaskStatusArray[x].uxCurrentPriority, 
-                  pxTaskStatusArray[x].usStackHighWaterMark);
+                  pxTaskStatusArray[x].uxStackHighWaterMark);
         pcWriteBuffer += strlen((char *)pcWriteBuffer);
 
       }

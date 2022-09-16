@@ -1,0 +1,18 @@
+{
+  "name": "yaml",
+  "version": "1.0.0",
+  "description": "",
+  "main": "yaml.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "nodemon": "nodemon my_file.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

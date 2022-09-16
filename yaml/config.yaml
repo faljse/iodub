@@ -1,0 +1,124 @@
+voltages: [0, 111, 170, 232, 362]
+Buttons:
+-
+  aidx: 1
+  pin: CONTROLLINO_A0
+-
+  aidx: 2
+  pin: CONTROLLINO_A8
+-
+  aidx: 3
+  pin: CONTROLLINO_A6
+-
+  aidx: 4
+  pin: CONTROLLINO_A3
+-
+  aidx: 5
+  pin: CONTROLLINO_A7
+-
+  aidx: 6
+  pin: CONTROLLINO_A1
+-
+  aidx: 7
+  pin: CONTROLLINO_A4
+-
+  aidx: 8
+  pin: CONTROLLINO_A5
+-
+  aidx: 9
+  pin: CONTROLLINO_A2
+
+
+Relays:
+-
+  id: 1
+  pin: CONTROLLINO_R2
+-
+  id: 2
+  pin: CONTROLLINO_R1
+- 
+  id: 2
+  pin: CONTROLLINO_R0
+- 
+  id: 4
+  pin: CONTROLLINO_R3
+-
+  id: 5
+  pin: CONTROLLINO_R4
+
+Dimmers:
+-
+  id: 101
+  ch: 1
+-
+  id: 102
+  ch: 2
+- 
+  id: 103
+  ch: 3
+- 
+  id: 104
+  ch: 4
+- 
+  id: 105
+  ch: 5
+- 
+  id: 106
+  ch: 6
+- 
+  id: 107
+  ch: 7
+- 
+  id: 108
+  ch: 8
+- 
+  id: 109
+  ch: 9
+- 
+  id: 110
+  ch: 10
+- 
+  id: 112
+  ch: 12
+- 
+  id: 113
+  ch: 13
+- 
+  id: 114
+  ch: 14
+- 
+  id: 115
+  ch: 15
+- 
+  id: 116
+  ch: 16
+- 
+  id: 117
+  ch: 17
+- 
+  id: 118
+  ch: 18
+- 
+  id: 119
+  ch: 19
+- 
+  id: 120
+  ch: 20
+- 
+  id: 121
+  ch: 21
+- 
+  id: 122
+  ch: 22
+
+
+
+
+Actions:
+-
+  idx: 0
+  action1: [1,0, 2,0 ]
+  action2: [1,0, 2,0 ]
+-
+  idx: 1
+  action1: [3,0, 4,0 ]

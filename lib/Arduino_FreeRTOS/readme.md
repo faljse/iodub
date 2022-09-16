@@ -3,8 +3,6 @@ This is a fork of Richard Barry's freeRTOS, optimised for the Arduino AVR device
 It has been created to provide access to FreeRTOS capabilities, with full compatibility to the Arduino environment.
 It does this by keeping hands off almost everything, and only touching the minimum of hardware to be successful.
 
-[![Arduino_CI](https://github.com/feilipu/Arduino_FreeRTOS_Library/workflows/Arduino_CI/badge.svg)](https://github.com/marketplace/actions/arduino_ci)
-
 ## Usage & Further Reading
 
 Read the short blog post on [Arduino FreeRTOS](https://feilipu.me/2015/11/24/arduino_freertos/) to get started. And there is another much older post on using [FreeRTOS with AVR](https://feilipu.me/2011/09/22/freertos-and-libraries-for-avr-atmega/), which may be useful to read too. There are some further posts I've written on [Hackster.IO](https://www.hackster.io/feilipu), but they're essentially the same content.
@@ -15,12 +13,14 @@ My other [AVRfreeRTOS Sourceforge Repository](https://sourceforge.net/projects/a
 
 This library was the genesis of [generalised support for the ATmega platform within FreeRTOS](https://github.com/FreeRTOS/FreeRTOS-Kernel/pull/48).
 
+Over the past few years freeRTOS development has become increasingly 32-bit orientated, with little change or improvement for the 8-bit world. As such I'm treating this 1st January 2022 10.4.6 snapshot as my LTS release. Bugfixes to 7th August 2022 have been added.
+
 ## General
 
 FreeRTOS has a multitude of configuration options, which can be specified from within the FreeRTOSConfig.h file.
-To keep commonality with all of the Arduino hardware options, some sensible defaults have been selected.
+To keep commonality with all of the Arduino hardware options, some sensible defaults have been selected. Feel free to change these defaults as you gain experience with FreeRTOS.
 
-The AVR Watchdog Timer is used to generate 15ms time slices, but Tasks that finish before their allocated time will hand execution back to the Scheduler. This does not affect the use of any of the normal Timer functions in Arduino.
+The AVR Watchdog Timer is used to generate 15ms time slices (Ticks), but Tasks that finish before their allocated time will hand execution back to the Scheduler.
 
 Time slices can be selected from 15ms up to 500ms. Slower time slicing can allow the Arduino MCU to sleep for longer, without the complexity of a Tickless idle.
 
@@ -34,14 +34,15 @@ Watchdog period options:
 * `WDTO_1S`
 * `WDTO_2S`
 
-Note that Timer resolution is affected by integer math division and the time slice selected. Trying to measure 50ms, using a 120ms time slice for example, won't work.
+Note that Timer resolution (or granularity) is affected by integer math division and the time slice selected. Trying to measure 50ms, using a 120ms time slice for example, won't work.
 
-Stack for the `loop()` function has been set at 192 bytes. This can be configured by adjusting the `configMINIMAL_STACK_SIZE` parameter. If you have stack overflow issues, just increase it.
-Users should prefer to allocate larger structures, arrays, or buffers using `pvPortMalloc()`, rather than defining them locally on the stack.
+The Arduino `delay()` function has been redefined to automatically use the FreeRTOS `vTaskDelay()` function when the delay required is one Tick or longer, by setting `configUSE_PORT_DELAY` to `1`, so that simple Arduino example sketches and tutorials work as expected. If you would like to measure a short millisecond delay of less than one Tick, then preferably use [`millis()`](https://www.arduino.cc/reference/en/language/functions/time/millis/) (or with greater granularity use [`micros()`](https://www.arduino.cc/reference/en/language/functions/time/micros/)) to achieve this outcome (for example see [BlinkWithoutDelay](https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay)). However, when the delay requested is less than one Tick then the original Arduino `delay()` function will be automatically selected.
 
-Memory for the heap is allocated by the normal `malloc()` function, wrapped by `pvPortMalloc()`.
-This option has been selected because it is automatically adjusted to use the capabilities of each device.
-Other heap allocation schemes are supported by FreeRTOS, and they can used with additional configuration.
+The 8-bit AVR Timer0 has been added as an option for the experienced user. Please examine the source code to figure out how to use it. Reconfiguring Timer0 for FreeRTOS will break Arduino `millis()` and `micros()` though, as these functions rely on Timer0.
+
+Stack for the `loop()` function has been set at 192 Bytes. This can be configured by adjusting the `configMINIMAL_STACK_SIZE` parameter. If you have stack overflow issues, just increase it. Users should prefer to allocate larger structures, arrays, or buffers using `pvPortMalloc()`, rather than defining them locally on the stack. Ideally you should not use `loop()` for your sketches, and then the stack size can be reduced down to 85 Bytes, saving some valuable memory.
+
+Memory for the heap is allocated by the normal `malloc()` function, wrapped by `pvPortMalloc()`. This option has been selected because it is automatically adjusted to use the capabilities of each device. Other heap allocation schemes are supported by FreeRTOS, and they can used with some additional configuration.
 
 ## Upgrading
 

@@ -3,42 +3,28 @@
 #include <Controllino.h>
 #include "dmx.h"
 #include "mqtt.h"
+#include "config.h"
 
-
-
-class Dimmer;
-class Dimmer{
-   public:
-    uint8_t id;
-    bool on = false;
-    uint8_t ch;
-    uint8_t value=0;
-
-  Dimmer(){};
-  Dimmer(uint8_t _id, uint8_t _ch): 
-  id(_id),
-  ch(_ch) 
-   {
+void writeDMX(uint8_t ch, uint8_t value) {
+  dmx_setch(ch,value);
+}
+void sendDimmer(int id, int value){
+  for(int i=0;i<(sizeof(relays)/2);i++) {
+    uint8_t rid=relays[i/2];
+    if(id==rid)
+      writeDMX(relays[i/2+1], value);
   }
+}
 
-  void dim(int _value){
-    value=_value;
-    writeDMX();
-  }
 
-  void writeDMX() {
-    dmx_setch(ch,value);
-  }
 
-  void sendMQTT() {
-    const char *topic="home/light/dimmer/000/state";
-    const char *payload="000";
-    sprintf((char *)topic, "home/light/dimmer/%d/stat1", id);
-    sprintf((char *)payload, "%d", value);
-    psclient->publish(topic, payload);
+void sendMQTT(uint8_t id, uint8_t value) {
+  const char *topic="home/light/dimmer/000/state";
+  const char *payload="000";
+  sprintf((char *)topic, "home/light/dimmer/%d/stat1", id);
+  sprintf((char *)payload, "%d", value);
+  psclient->publish(topic, payload);
 
-  }
-
-};
+}
 
 #endif

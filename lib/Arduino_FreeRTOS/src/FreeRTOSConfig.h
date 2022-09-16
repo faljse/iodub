@@ -1,5 +1,5 @@
 /*
- * FreeRTOS Kernel V10.4.4
+ * FreeRTOS Kernel V10.4.6
  * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
@@ -43,15 +43,9 @@
  * See https://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/
 
-// And on to the things the same no matter the AVR type...
+/* And on to the things the same no matter the AVR type... */
 #define configUSE_PREEMPTION                1
 
-// Define configUSE_IDLE_HOOK
-#ifndef configUSE_IDLE_HOOK
-    #define configUSE_IDLE_HOOK             1
-#endif
-
-#define configUSE_TICK_HOOK                 0
 #define configCPU_CLOCK_HZ                  ( ( uint32_t ) F_CPU )          // This F_CPU variable set by the environment
 #define configMAX_PRIORITIES                4
 #define configIDLE_SHOULD_YIELD             1
@@ -61,7 +55,7 @@
 #define configQUEUE_REGISTRY_SIZE           0
 #define configCHECK_FOR_STACK_OVERFLOW      1
 
-#define configUSE_TRACE_FACILITY            0
+#define configUSE_TRACE_FACILITY            1
 #define configUSE_16_BIT_TICKS              1
 
 #define configUSE_MUTEXES                   1
@@ -73,6 +67,13 @@
 
 #define configSUPPORT_DYNAMIC_ALLOCATION    1
 #define configSUPPORT_STATIC_ALLOCATION     0
+
+#define configUSE_IDLE_HOOK                 0
+#define configUSE_TICK_HOOK                 0
+
+/* Delay definition - here, the user can choose which delay implementation is required.
+ * The default is to change nothing. */
+#define configUSE_PORT_DELAY                1
 
 /* Timer definitions. */
 #define configUSE_TIMERS                    1
@@ -99,7 +100,7 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelay                      1
 #define INCLUDE_xTaskGetSchedulerState          0
 #define INCLUDE_xTaskGetIdleTaskHandle          0 // create an idle task handle.
-#define INCLUDE_xTaskGetCurrentTaskHandle       0
+#define INCLUDE_xTaskGetCurrentTaskHandle       1
 #define INCLUDE_uxTaskGetStackHighWaterMark     1
 
 #define configMAX(a,b)  ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); _a > _b ? _a : _b; })

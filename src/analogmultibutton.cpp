@@ -25,8 +25,12 @@
 
 #include <Arduino.h>
 #include "analogmultibutton.h"
+#include "config.h"
+#include "relay.h"
+#include "dimmer.h"
 
-AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], ActionSetGroup *actions[], unsigned int debounceDuration, unsigned int analogResolution)
+
+AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], uint8_t aidx, unsigned int debounceDuration, unsigned int analogResolution)
 {
   pinMode(pin, INPUT ); // ensure button pin is an input
   digitalWrite(pin, LOW ); // ensure pullup is off on button pin
@@ -35,11 +39,7 @@ AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], Act
   this->total = total;
   this->debounceDuration = debounceDuration;
   this->analogResolution = analogResolution;
-  this->actions[0]=actions[0];
-  this->actions[1]=actions[1];
-  this->actions[2]=actions[2];
-  this->actions[3]=actions[3];
-
+  this->aidx=aidx;
 
   for(int i = 0; i < total; i++) {
     // determine value boundaries, so we can easily determine which button has the closest value to the current analogRead()
@@ -81,10 +81,17 @@ void AnalogMultiButton::update()
       Serial.print(pin);;
       Serial.print("/");
       Serial.println(4-button);
-      this->actions[4-button]->next();
+
+      for(uint8_t i=0;i<10;i++) {
+        uint8_t id=actions[aidx][0][i*2];
+        uint8_t val=actions[aidx][0][i*2+1];
+
+        if(id==0) break;
+        if(id<100) sendRelay(id, val);
+        else sendDimmer(id, val);
+      }
     }
   }
-
 }
 
 boolean AnalogMultiButton::isPressedBefore(int button, int duration)

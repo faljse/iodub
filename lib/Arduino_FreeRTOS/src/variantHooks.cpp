@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Phillip Stevens  All Rights Reserved.
+ * Copyright (C) 2022 Phillip Stevens  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -43,6 +43,7 @@ extern void loop(void);
 /*-----------------------------------------------------------*/
 
 void initVariant(void) __attribute__ ((OS_main));
+
 void initVariant(void)
 {
     // As the Task stacks are on heap before Task allocated heap variables,
@@ -68,7 +69,7 @@ void initVariant(void)
  * NOTE: vApplicationIdleHook() MUST NOT, UNDER ANY CIRCUMSTANCES, CALL A FUNCTION THAT MIGHT BLOCK.
  *
  */
-void vApplicationIdleHook( void ) __attribute__((weak));
+void vApplicationIdleHook( void ) __attribute__ ((weak));
 
 void vApplicationIdleHook( void )
 {
@@ -149,7 +150,7 @@ Notes:
     This routine will never return.
     This routine is referenced in the task.c file of FreeRTOS as an extern.
 \*---------------------------------------------------------------------------*/
-void vApplicationMallocFailedHook( void ) __attribute__((weak));
+void vApplicationMallocFailedHook( void ) __attribute__ ((weak));
 
 void vApplicationMallocFailedHook( void )
 {
@@ -169,10 +170,10 @@ void vApplicationMallocFailedHook( void )
 #if ( configCHECK_FOR_STACK_OVERFLOW >= 1 )
 
 void vApplicationStackOverflowHook( TaskHandle_t xTask,
-                                    char * pcTaskName ) __attribute__((weak));
+                                    char * pcTaskName ) __attribute__ ((weak));
 
-void vApplicationStackOverflowHook( TaskHandle_t xTask __attribute__((unused)),
-                                    char * pcTaskName __attribute__((unused)) )
+void vApplicationStackOverflowHook( TaskHandle_t xTask __attribute__ ((unused)),
+                                    char * pcTaskName __attribute__ ((unused)) )
 {
 
     prvSetMainLedOn(); // Main LED on.
@@ -191,36 +192,36 @@ void vApplicationStackOverflowHook( TaskHandle_t xTask __attribute__((unused)),
 
 void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
                                     StackType_t ** ppxIdleTaskStackBuffer,
-                                    configSTACK_DEPTH_TYPE * pulIdleTaskStackSize ) __attribute__((weak));
+                                    configSTACK_DEPTH_TYPE * puxIdleTaskStackSize ) __attribute__ ((weak));
 
 void vApplicationGetIdleTaskMemory( StaticTask_t ** ppxIdleTaskTCBBuffer,
                                     StackType_t ** ppxIdleTaskStackBuffer,
-                                    configSTACK_DEPTH_TYPE * pulIdleTaskStackSize )
+                                    configSTACK_DEPTH_TYPE * puxIdleTaskStackSize )
 {
     static StaticTask_t xIdleTaskTCB;
     static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
 
     *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;
     *ppxIdleTaskStackBuffer = uxIdleTaskStack;
-    *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+    *puxIdleTaskStackSize = configMINIMAL_STACK_SIZE;
 }
 
 #if ( configUSE_TIMERS >= 1 )
 
 void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
                                      StackType_t ** ppxTimerTaskStackBuffer,
-                                     configSTACK_DEPTH_TYPE * pulTimerTaskStackSize ) __attribute__((weak));
+                                     configSTACK_DEPTH_TYPE * puxTimerTaskStackSize ) __attribute__ ((weak));
 
 void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
                                      StackType_t ** ppxTimerTaskStackBuffer,
-                                     configSTACK_DEPTH_TYPE * pulTimerTaskStackSize )
+                                     configSTACK_DEPTH_TYPE * puxTimerTaskStackSize )
 {
     static StaticTask_t xTimerTaskTCB;
     static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
 
     *ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
     *ppxTimerTaskStackBuffer = uxTimerTaskStack;
-    *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+    *puxTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
 }
 
 #endif /* configUSE_TIMERS >= 1 */
