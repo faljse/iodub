@@ -43,7 +43,6 @@ PubSubClient *psclient;
 void setup()
 {
   buildConfig();
-
   dmx_init();
   Serial.begin(38400);
   Serial.println("--IODUB--");
@@ -53,13 +52,12 @@ void setup()
   timerButtonHandler = xTimerCreate("Button", 3, pdTRUE,
                                    (void *)0,
                                    vButtonTimerCallback);
-  timerPrintHandler = xTimerCreate("Print", 1000, pdTRUE,
+  timerPrintHandler = xTimerCreate("Print", 200, pdTRUE,
                                     (void *)0,
                                     vPrintTimerCallback);
   xTimerStart(timerMixerHandler,0);
   xTimerStart(timerButtonHandler,0);
   xTimerStart(timerPrintHandler,0);
-
 
   xTaskCreate(TaskNetwork, "Network", 
               384,         // Stack size
@@ -67,12 +65,12 @@ void setup()
               0,                   // Priority
               &taskNetworkHandle); // Task handler
 
-                for(uint8_t i=CONTROLLINO_A0;i!=CONTROLLINO_A15;i++){
-                  pinMode(i, INPUT);
-                }
-                for(uint8_t i=CONTROLLINO_R0;i!=CONTROLLINO_R15;i++){
-                  pinMode(i, OUTPUT);
-                }
+  for(uint8_t i=CONTROLLINO_A0;i!=CONTROLLINO_A15;i++){
+    pinMode(i, INPUT);
+  }
+  for(uint8_t i=CONTROLLINO_R0;i!=CONTROLLINO_R15;i++){
+    pinMode(i, OUTPUT);
+  }
   bitClear(ADCSRA,ADPS0); 
   bitSet(ADCSRA,ADPS1); 
   bitClear(ADCSRA,ADPS2);
@@ -81,7 +79,7 @@ void setup()
 void vPrintTimerCallback(TimerHandle_t xTimer)
 {
   printTasks();
-  // printDMX();
+  printDMX();
   printAnalog();
 }
 
