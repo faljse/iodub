@@ -30,7 +30,7 @@
 #include "dimmer.h"
 
 
-AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], uint8_t aidx, unsigned int debounceDuration, unsigned int analogResolution)
+AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], uint8_t aidx[4], unsigned int debounceDuration, unsigned int analogResolution)
 {
   pinMode(pin, INPUT ); // ensure button pin is an input
   digitalWrite(pin, LOW ); // ensure pullup is off on button pin
@@ -39,7 +39,9 @@ AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], uin
   this->total = total;
   this->debounceDuration = debounceDuration;
   this->analogResolution = analogResolution;
-  this->aidx=aidx;
+  for(uint8_t i=0;i<4;i++) {
+    this->aidx[i]=aidx[i];
+  }
 
   for(int i = 0; i < total; i++) {
     // determine value boundaries, so we can easily determine which button has the closest value to the current analogRead()
@@ -83,8 +85,16 @@ void AnalogMultiButton::update()
       Serial.println(4-button);
 
       for(uint8_t i=0;i<10;i++) {
-        uint8_t id=pgm_read_byte(&actions[aidx][0][i*2]);
-        uint8_t val=pgm_read_byte(&actions[aidx][0][i*2+1]);
+        uint8_t pos=actionstate[aidx[button]];
+
+        uint8_t id=pgm_read_byte(&actions[aidx[button]][pos][i*2]);
+        if(id==0) {
+          id=pgm_read_byte(&actions[aidx[button]][0][i*2]);
+          pos=-1;
+        }
+        uint8_t val=pgm_read_byte(&actions[aidx[button]][pos][i*2+1]);
+        actionstate[aidx[button]]=pos+1;
+        
 
         if(id==0) break;
         if(id<100) sendRelay(id, val);
