@@ -19,7 +19,10 @@ void buildConfig() {
     pinMode(CONTROLLINO_R4, OUTPUT);
     const int voltages[5] = {0, 111, 170, 232, 362};
     for(uint8_t i=0; i<(sizeof(buttons)/2);i++) {
-        abuttons[i] = AnalogMultiButton(buttons[i*2], 5, voltages, buttons[i*2]+1, 20, 1024);
-        pinMode(buttons[i*2]+1, INPUT);
+        uint8_t pin=pgm_read_byte(&(buttons[i*2]));
+        uint8_t aidx=pgm_read_byte(&(buttons[i*2+1]));
+
+        abuttons[i] = AnalogMultiButton(pin, 5, voltages, aidx, 20, 1024);
+        pinMode(pgm_read_byte(&(buttons[i*2]))+1, INPUT);
     }
 }

@@ -53,9 +53,9 @@ void setup()
   timerButtonHandler = xTimerCreate("Button", 3, pdTRUE,
                                    (void *)0,
                                    vButtonTimerCallback);
-  timerPrintHandler = xTimerCreate("Print", 200, pdTRUE,
-                                   (void *)0,
-                                   vPrintTimerCallback);
+  timerPrintHandler = xTimerCreate("Print", 1000, pdTRUE,
+                                    (void *)0,
+                                    vPrintTimerCallback);
   xTimerStart(timerMixerHandler,0);
   xTimerStart(timerButtonHandler,0);
   xTimerStart(timerPrintHandler,0);
@@ -81,8 +81,8 @@ void setup()
 void vPrintTimerCallback(TimerHandle_t xTimer)
 {
   printTasks();
-  printDMX();
-//  printAnalog();
+  // printDMX();
+  printAnalog();
 }
 
 void vButtonTimerCallback(TimerHandle_t xTimer)
@@ -117,22 +117,23 @@ void TaskNetwork(void *pvParameters)
   {
       if (!psclient->connected()) {
         reconnectMQTT(psclient);
-        psclient->setCallback(callbackMQTT);
-        psclient->subscribe("home/light/#");
+        //psclient->setCallback(callbackMQTT);
+        // psclient->subscribe("home/light/#");
       }
-      psclient->loop();
-      if(!ethClient->available()) {
-        vTaskDelay(1); // sleep for 1 tick to avoid busy loop
+      else {
+        psclient->loop();
+        if(!ethClient->available()) {
+          vTaskDelay(1); // sleep for 1 tick to avoid busy loop
+        }
       }
   }
 }
 
-char ptrTaskList[200];
+char ptrTaskList[400];
 void tasks(char *pcWriteBuffer);
 void printTasks()
 {
   tasks(ptrTaskList);
-  Serial.println(F("--"));
   Serial.print(ptrTaskList);
 }
 void printAnalog()
@@ -143,10 +144,8 @@ void printAnalog()
     Serial.print(":");
     Serial.print(analogRead(i));
     Serial.print(" ");
-
   }
   Serial.println();
-  
 }
 
 void tasks(char *pcWriteBuffer)
@@ -168,7 +167,6 @@ void tasks(char *pcWriteBuffer)
 
   if (pxTaskStatusArray != NULL)
   {
-
     /* Generate raw status information about each task. */
     uxArraySize = uxTaskGetSystemState(pxTaskStatusArray,
                                        uxArraySize,
@@ -178,10 +176,12 @@ void tasks(char *pcWriteBuffer)
     /* Avoid divide by zero errors. */
     if (ulTotalRunTime > 0)
     {
+
       /* For each populated position in the pxTaskStatusArray array,
          format the raw data as human readable ASCII data. */
       for (x = 0; x < uxArraySize; x++)
       {
+
         /* What percentage of the total run time has the task used?
             This will always be rounded down to the nearest integer.
             ulTotalRunTimeDiv100 has already been divided by 100. */

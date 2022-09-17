@@ -128,5 +128,8 @@ to exclude the API function. */
     #endif
 #endif
 
+#define configGENERATE_RUN_TIME_STATS  1
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()    vConfigureTimerForRunTimeStats()
+#define portGET_RUN_TIME_COUNTER_VALUE()            vGetTimerForRunTimeStats()
 
 #endif /* FREERTOS_CONFIG_H */

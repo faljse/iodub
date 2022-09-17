@@ -83,8 +83,8 @@ void AnalogMultiButton::update()
       Serial.println(4-button);
 
       for(uint8_t i=0;i<10;i++) {
-        uint8_t id=actions[aidx][0][i*2];
-        uint8_t val=actions[aidx][0][i*2+1];
+        uint8_t id=pgm_read_byte(&actions[aidx][0][i*2]);
+        uint8_t val=pgm_read_byte(&actions[aidx][0][i*2+1]);
 
         if(id==0) break;
         if(id<100) sendRelay(id, val);

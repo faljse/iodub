@@ -10,9 +10,9 @@ void writeDMX(uint8_t ch, uint8_t value) {
 }
 void sendDimmer(int id, int value){
   for(int i=0;i<(sizeof(relays)/2);i++) {
-    uint8_t rid=relays[i/2];
+    uint8_t rid=pgm_read_byte(&(relays[i/2]));
     if(id==rid)
-      writeDMX(relays[i/2+1], value);
+      writeDMX(pgm_read_byte(&(relays[i/2+1])), value);
   }
 }
 
