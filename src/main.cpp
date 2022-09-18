@@ -23,7 +23,6 @@ extern "C" int vGetTimerForRunTimeStats(void)
 #include "analogmultibutton.h"
 #include "dmx.h"
 
-#define COUNT_OF(x) ((sizeof(x) / sizeof(0 [x])) / ((size_t)(!(sizeof(x) % sizeof(0 [x])))))
 
 void timer_init();
 void printTasks();
@@ -100,15 +99,15 @@ void vMixerTimerCallback(TimerHandle_t xTimer)
 void TaskNetwork(void *pvParameters)
 {
   byte mac[6] = { 0xCA, 0xFE, 0xBA, 0xBE, 0x00, 0x00 };
-  byte ip[4] = { 192, 168, 0, 2 };
+  byte ip[4] = { 192, 168, 16, 30 };
   byte dns[4] = { 8, 8, 8, 8 };
-  byte gw[4] = { 192, 168, 0, 1 };
+  byte gw[4] = { 192, 168, 16, 9 };
   byte subnet[4] = { 255, 255, 255, 0 };
   NetEeprom.writeManualConfig(mac, ip, dns, gw, subnet);
   NetEeprom.begin();
   ethClient = new EthernetClient();
   psclient = new PubSubClient(*ethClient);
-  IPAddress server(192,168,0,1); 
+  IPAddress server(192,168,16,200); 
 
 
   psclient->setServer(server, 1883);
@@ -116,8 +115,8 @@ void TaskNetwork(void *pvParameters)
   {
       if (!psclient->connected()) {
         reconnectMQTT(psclient);
-        //psclient->setCallback(callbackMQTT);
-        // psclient->subscribe("home/light/#");
+        psclient->setCallback(callbackMQTT);
+        psclient->subscribe("home/action/#");
       }
       else {
         psclient->loop();
