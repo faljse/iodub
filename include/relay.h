@@ -3,12 +3,19 @@
 
 #include <Controllino.h>
 
-void sendRelay(uint8_t outputNr, uint8_t on) {
-  digitalWrite(outputNr, on);
-  char strNr[5];
-  char strOn[4];
-  snprintf(strNr, 10, "%d",outputNr);
-  snprintf(strOn, 10, "%s",on?"ON":"OFF");
+void sendRelay(uint8_t id, uint8_t value) {
+  char strNr[10];
+  char strOn[10];
+  snprintf(strNr, 10, "%d", 0);
+
+  for(uint8_t i=0; i<(sizeof(relays)/2); i++) {
+    uint8_t rid=pgm_read_byte(&(relays[i*2]));
+    if(id==rid) {
+        digitalWrite(pgm_read_byte(&(relays[i*2+1])), value);
+        snprintf(strNr, 10, "%d", pgm_read_byte(&(relays[i*2+1])));
+    }
+  }
+  snprintf(strOn, 10, "%s", value?"ON":"OFF");
   Serial.print("send");
   Serial.print(strNr);
   Serial.println(strOn);

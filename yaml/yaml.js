@@ -14,7 +14,7 @@ try {
         code+=b.pin+", "+b.aidx;
         if(i<data.Buttons.length-1)
             code+=", "; 
-    } 
+    }  
     code+="};\n";
     header+=`extern const uint8_t buttons[${data.Buttons.length*5+1}] PROGMEM;\n`
 

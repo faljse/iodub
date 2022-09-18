@@ -41,7 +41,6 @@ AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], uin
   this->analogResolution = analogResolution;
   for(uint8_t i=0;i<4;i++) {
     this->aidx[i]=aidx[i];
-    Serial.println(this->aidx[i]);
   }
 
   for(int i = 0; i < total; i++) {
