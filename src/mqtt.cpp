@@ -6,6 +6,8 @@
 #include "mqtt.h"
 #include "relay.h"
 #include "dimmer.h"
+#include "action.h"
+
 
 
 void reconnectMQTT(PubSubClient *psc) {
@@ -48,21 +50,8 @@ void callbackMQTT(char* _topic, byte* _payload, unsigned int length) {
         Serial.print(aidx);
         Serial.print(":");
         Serial.print(payload.toInt());
+        sendAction(aidx);
 
-        if(aidx>COUNT_OF(actionstate))
-          return;
-        uint8_t pos=actionstate[aidx];
-        if(pgm_read_byte(&actions[aidx][pos][0])==0) {//terminating zero - reset to pos 0
-          pos=0;
-        }
-        for(uint8_t i=0;i<10;i++) {
-          uint8_t id=pgm_read_byte(&actions[aidx][pos][i*2]);  
-          uint8_t val=pgm_read_byte(&actions[aidx][pos][i*2+1]);
-          if(id==0) break;
-          if(id<100) sendRelay(id, val);
-          else sendDimmer(id, val);
-        }
-        actionstate[aidx]=pos+1;
     }
     
 

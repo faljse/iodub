@@ -1,10 +1,10 @@
 voltages: [0, 111, 170, 232, 362]
 Buttons:
 -
-  aidx: [1,0,0,0]
+  aidx: [1,2,0,3]
   pin: CONTROLLINO_A0 #SZ Terrasse
 -
-  aidx: [1,0,0,0]
+  aidx: [1,2,0,3]
   pin: CONTROLLINO_A8 #SZ Eingang
 -
   aidx: [0,0,0,0]
@@ -13,7 +13,7 @@ Buttons:
   aidx: [0,0,0,0]
   pin: CONTROLLINO_A3 #Bad
 -
-  aidx: [0,0,0,0]
+  aidx: [2,0,0,4]
   pin: CONTROLLINO_A7 #VZ
 -
   aidx: [0,0,0,0]
@@ -117,5 +117,17 @@ Actions:
   action1: [0,0 ] #dummy
 -
   idx: 1
-  action1: [3,1 ]
-  action2: [3,0 ]
+  action1: [3,0 ]
+  action2: [3,1 ]
+-
+  idx: 2
+  action1: [109,0, 108,0 ]
+  action2: [109,5, 108,0 ]
+  action3: [109,100, 108,100 ]
+  action4: [109,255, 108,255 ]
+-
+  idx: 3
+  action1: [201,0 ]
+-
+  idx: 4
+  action1: [202,0 ]
