@@ -42,10 +42,11 @@ PubSubClient *psclient;
 
 void setup()
 {
-  buildConfig();
-  dmx_init();
   Serial.begin(38400);
   Serial.println("--IODUB--");
+  buildConfig();
+  dmx_init();
+
   timerMixerHandler = xTimerCreate("Mixer", 2, pdTRUE,
                                    (void *)0,
                                    vMixerTimerCallback);

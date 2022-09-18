@@ -41,6 +41,7 @@ AnalogMultiButton::AnalogMultiButton(int pin, int total, const int values[], uin
   this->analogResolution = analogResolution;
   for(uint8_t i=0;i<4;i++) {
     this->aidx[i]=aidx[i];
+    Serial.println(this->aidx[i]);
   }
 
   for(int i = 0; i < total; i++) {
@@ -82,24 +83,27 @@ void AnalogMultiButton::update()
     if(button!=0) {
       Serial.print(pin);;
       Serial.print("/");
-      Serial.println(4-button);
-
+      button=4-button;
+      Serial.println(button);
+      uint8_t pos=actionstate[aidx[button]];
+      if(pgm_read_byte(&actions[aidx[button]][pos][0])==0) {//terminating zero - reset to pos 0
+        pos=0;
+      }
+      Serial.print("pos:");
+      Serial.println(pos);
       for(uint8_t i=0;i<10;i++) {
-        uint8_t pos=actionstate[aidx[button]];
+        Serial.print("aidx:");
+        Serial.println(aidx[button]);
 
-        uint8_t id=pgm_read_byte(&actions[aidx[button]][pos][i*2]);
-        if(id==0) {
-          id=pgm_read_byte(&actions[aidx[button]][0][i*2]);
-          pos=-1;
-        }
+        uint8_t id=pgm_read_byte(&actions[aidx[button]][pos][i*2]);  
         uint8_t val=pgm_read_byte(&actions[aidx[button]][pos][i*2+1]);
-        actionstate[aidx[button]]=pos+1;
-        
-
+        Serial.print("id:");
+        Serial.println(id);
         if(id==0) break;
         if(id<100) sendRelay(id, val);
         else sendDimmer(id, val);
       }
+      actionstate[aidx[button]]=pos+1;
     }
   }
 }

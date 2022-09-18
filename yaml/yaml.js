@@ -11,10 +11,10 @@ try {
     code+=`const uint8_t buttons[${data.Buttons.length*5+1}] PROGMEM = {\n`;
     for(let i=0;i<data.Buttons.length;i++) {
         let b=data.Buttons[i];
-        code+=b.aidx+", "+b.pin;
+        code+=b.pin+", "+b.aidx;
         if(i<data.Buttons.length-1)
-        code+=", "; 
-    }
+            code+=", "; 
+    } 
     code+="};\n";
     header+=`extern const uint8_t buttons[${data.Buttons.length*5+1}] PROGMEM;\n`
 
