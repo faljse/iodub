@@ -82,11 +82,12 @@ void AnalogMultiButton::update()
       
     buttonPressed = button;
     if(button!=0) {
-      Serial.print(pin);;
-      Serial.print("/");
       button=4-button;
-      Serial.println(button);
       sendAction(aidx[button]);
+      char topic[20];
+      sprintf(topic, "home/button/%d/%d", pin, button);
+      if(psclient!=nullptr)
+        psclient->publish(topic,"1");
     }
   }
 }

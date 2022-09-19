@@ -117,17 +117,17 @@ Actions:
   action1: [0,0 ] #dummy
 -
   idx: 1
-  action1: [3,0 ]
+  action1: [3,0 ] # SZ
   action2: [3,1 ]
 -
   idx: 2
-  action1: [109,0, 108,0 ]
+  action1: [109,0, 108,0 ] #VZ
   action2: [109,5, 108,0 ]
   action3: [109,100, 108,100 ]
   action4: [109,255, 108,255 ]
 -
   idx: 3
-  action1: [201,0 ]
+  action1: [201,0 ] #SZ aus
 -
   idx: 4
-  action1: [202,0 ]
+  action1: [202,0 ] #VZ aus

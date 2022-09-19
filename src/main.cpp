@@ -37,7 +37,6 @@ TaskHandle_t taskNetworkHandle, taskButtonsHandle;
 TimerHandle_t timerMixerHandler, timerPrintHandler, timerButtonHandler;
 
 EthernetClient *ethClient;
-PubSubClient *psclient;
 
 void setup()
 {

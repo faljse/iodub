@@ -17,10 +17,6 @@ void reconnectMQTT(PubSubClient *psc) {
     // Attempt to connect
     if (psc->connect("arduinoClient")) {
       Serial.println("connected");
-      // Once connected, publish an announcement...
-      psc->publish("outTopic","hello world");
-      // ... and resubscribe
-      psc->subscribe("inTopic");
     } else {
       Serial.print("failed, rc=");
       Serial.print(psc->state());
